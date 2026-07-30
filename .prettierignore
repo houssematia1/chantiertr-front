@@ -7,3 +7,9 @@ docs
 # Le systeme de design est un document de reference, mis a jour hors du depot
 # front. Le reformater creerait un diff a chaque revision recue.
 design-system
+
+# Meme raison : `pistes.html` est la comparaison des quatre directions, ecrite a
+# la main et servie telle quelle pour etre regardee dans un navigateur. C'est un
+# document de reference, pas une source du produit. Le reformater rendrait
+# illisible le diff de la prochaine iteration.
+public/pistes.html
