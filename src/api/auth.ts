@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
+import type { QueryClient, UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 
 import { ApiError, api, amorcerSession } from '@/lib/http'
 import type { Enveloppe } from '@/lib/http'
@@ -103,9 +103,27 @@ export function useConnexion(): UseMutationResult<Utilisateur, Error, Identifian
 /**
  * Deconnexion.
  *
- * Le cache est vide INTEGRALEMENT, pas seulement la session : tout ce qu'il
- * contient a ete lu au nom du compte qui part. Le laisser en place le
- * montrerait au compte suivant sur le meme poste, le temps d'un rafraichissement.
+ * Tout ce que le cache contient a ete lu au nom du compte qui part : il doit
+ * donc partir avec lui, sans quoi le compte suivant sur le meme poste le verrait
+ * le temps d'un rafraichissement. Une seule entree survit, et elle est mise a
+ * `null` : celle de la session, que la garde de route lit pour savoir qu'il n'y
+ * a plus personne.
+ *
+ * `clear()` NE PEUT PAS ETRE EMPLOYE ICI, et c'est le contraire de ce qu'on
+ * croit en le lisant. Il detruit les entrees du cache sans en avertir les
+ * observateurs montes : chacun se reconstruit alors une entree de son cote, et
+ * deux composants qui lisent la MEME clef se retrouvent branches sur deux
+ * instances differentes. Le `setQueryData` qui suit n'en touche qu'une.
+ *
+ * Le symptome, verifie contre l'API en marche : `POST /logout` rendait 200,
+ * `Profil` voyait bien la session tomber a `null` et ne rendait plus rien —
+ * mais `GardeDeSession`, restee sur son ancienne instance, continuait de croire
+ * la session ouverte et rendait son `Outlet`. Ecran vide, adresse inchangee,
+ * aucune erreur en console. L'utilisateur reste bloque sur une page blanche
+ * apres avoir demande a se deconnecter.
+ *
+ * L'ordre compte donc, et il est inverse de l'intuition : la session d'abord,
+ * par une valeur explicite, le reste ensuite et par retrait cible.
  *
  * Le vidage a lieu dans `onSettled` et non `onSuccess` : si l'API refuse, la
  * session locale doit tomber quand meme — un ecran qui reste ouvert sur un
@@ -119,11 +137,26 @@ export function useDeconnexion(): UseMutationResult<void, Error, void> {
       await api.post('/logout')
     },
     onSettled: () => {
-      client.clear()
-      // Pose apres le vidage, et non avant : `clear()` emporterait la valeur.
-      // Sans elle, l'observateur remonte et redemande `GET /me` pour se faire
-      // rendre 401 — un aller-retour pour une reponse deja connue.
-      client.setQueryData(CLEF_SESSION, null)
+      fermerLaSessionLocale(client)
     },
+  })
+}
+
+/**
+ * Remet le cache dans l'etat « personne n'est connecte ».
+ *
+ * Fonction et non corps de callback : c'est l'invariant que la deconnexion doit
+ * tenir, et il se teste sans monter de composant — `src/api/auth.test.ts`
+ * verifie qu'un observateur deja abonne VOIT le passage a `null`. C'est
+ * precisement ce que `clear()` ne garantissait pas.
+ */
+export function fermerLaSessionLocale(client: QueryClient): void {
+  // `null` et non un retrait : la garde de route distingue « pas encore charge »
+  // de « personne n'est connecte ». Un retrait la ferait redemander `GET /me`
+  // pour se faire rendre 401 — un aller-retour pour une reponse deja connue.
+  client.setQueryData(CLEF_SESSION, null)
+
+  client.removeQueries({
+    predicate: (requete) => requete.queryKey[0] !== CLEF_SESSION[0],
   })
 }

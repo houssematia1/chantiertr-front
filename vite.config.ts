@@ -16,7 +16,7 @@ export default defineConfig({
     // Le port est fixe et non negociable : il est declare cote API dans
     // `SANCTUM_STATEFUL_DOMAINS` et `CORS_ALLOWED_ORIGINS`. Un port de repli
     // silencieux ferait echouer la session sans qu'on comprenne pourquoi.
-    port: 5173,
+    port: 5174,
     strictPort: true,
     host: 'localhost',
   },

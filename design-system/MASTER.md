@@ -168,3 +168,43 @@ Les libellés et le regroupement du menu viennent du logiciel d'origine, pas d'u
 **On lui prend :** la logique, les libellés, la structure du menu, les attentes de densité, le vocabulaire métier.
 
 **On ne lui prend pas son style.** Il est daté. Ses tokens — marine et vert, rayon 14 px — ne sont pas repris. Ce fichier-ci fait foi sur le visuel.
+
+---
+
+## 10. Écrans sans session — direction validée par le client
+
+**Référence visuelle : `design-system/reference/connexion.html`.** Elle a été validée écran à l'écran après quatre pistes comparées. Elle fait foi. Ce n'est pas une inspiration, c'est le modèle à transposer en React.
+
+Direction retenue : **signalétique de chantier.** Trois pistes ont été écartées — presse technique suisse, registre contractuel en serif, instrument sombre monospace.
+
+### La composition
+
+Deux volets pleine hauteur, séparés par une couture de 7 px, sans marge extérieure.
+
+**Volet identité** — marine, environ deux tiers de la largeur :
+- Le logo ancré en haut à gauche
+- Un bloc central poussé vers le bas par `margin-top:auto` : accroche, titre, paragraphe, chiffres
+- Un pied de volet séparé par un filet, portant du contenu métier réel — convention CIEG, noms des formules
+- **Une trame de plan** en fond, pas de la décoration : deux dégradés linéaires à 34 px, opacité 0,5
+- **La feuille du logo en très grand**, 680 px, débordant en bas à droite, opacité 0,055. C'est elle qui ancre la composition et empêche l'aplat marine de paraître vide.
+
+**Couture** — la bande d'avertissement ambre en **rayures verticales**, entre les deux volets. Elle structure au lieu de décorer, et ne se fait pas couper au bord comme le faisait une bande en pied.
+
+**Volet formulaire** — blanc, 452 px fixes :
+- Une barre supérieure de 58 px : intitulé de l'espace, et un jeton d'environnement
+- Le formulaire **centré verticalement** — voir ci-dessous
+- Un pied avec l'état de l'API
+
+### Trois décisions à ne pas défaire
+
+**Le formulaire est centré verticalement dans son volet.** Une tentative de l'ancrer vers le haut a été explicitement rejetée par le client. Ne pas y revenir.
+
+**Le vert porte l'emphase du titre, pas l'ambre.** Le vert est la couleur de l'action et de l'état validé ; l'ambre celle de l'alerte. Mettre l'ambre sur le mot fort du titre brouille cette grammaire. L'ambre ne sert qu'à la couture.
+
+**Le rayon du logo est de 12 px**, en exception assumée à la règle des 4 à 6 px. Un logo n'est pas un contrôle d'interface : une marque garde sa géométrie. Ne pas le « corriger ».
+
+### Typographie de ces écrans
+
+Barlow Condensed 700 en capitales pour les titres, les chiffres et les micro-libellés. Barlow 400/500 pour le texte courant. Titre à 64 px, interligne 0,92.
+
+**Cette famille remplace Fira Code et Fira Sans annoncées en section 4 pour les écrans sans session.** La section 4 reste valable pour l'application connectée — tableaux, formulaires métier — où le mono tabulaire fait son travail. À trancher lors du premier écran connecté : unifier, ou assumer deux familles selon le contexte.
