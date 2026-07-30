@@ -1,9 +1,16 @@
-import { Navigate, Outlet, useLocation } from 'react-router'
+import { Navigate, useLocation } from 'react-router'
 
 import { useSession } from '@/api/auth'
+import { AppLayout } from '@/layouts/AppLayout'
 
 /**
  * Garde de route : au-dela de ce point, il y a forcement une session.
+ *
+ * ELLE REND LE SHELL, et ce n'est pas un melange de responsabilites : le shell
+ * EXIGE un contexte de session non nul — barre laterale filtree par role, pied
+ * portant le compte, bandeau d'emprunt. La garde est le seul endroit ou le `null`
+ * est ecarte ; le refaire dans `AppLayout` imposerait un retour mort ou une
+ * assertion.
  *
  * L'interface MASQUE, le serveur INTERDIT. Cette garde evite d'afficher un
  * ecran vide a quelqu'un qui n'est pas connecte ; elle ne protege rien. Chaque
@@ -36,5 +43,5 @@ export function GardeDeSession() {
     )
   }
 
-  return <Outlet />
+  return <AppLayout contexte={session.data} />
 }

@@ -216,6 +216,54 @@ Les libellés et le regroupement du menu viennent du logiciel d'origine, pas d'u
 
 ---
 
+## 8bis. Le shell, tel qu'il est livré
+
+Barre latérale **240 px**, en-tête **56 px**, aucune ombre, aucune animation sur la navigation. Les trois mesures sont celles de la section 2 ; les valeurs rendues ont été relevées au navigateur et non estimées.
+
+### Le défilement est intérieur, pas celui de la page
+
+`h-dvh` sur le shell, `overflow-hidden`, et `overflow-y-auto` sur la seule zone de contenu. Un tableau de budget a deux cents lignes : si c'est la **page** qui défile, l'en-tête et la barre latérale partent vers le haut, et quelqu'un qui cherche la ligne 150 perd le nom des colonnes et le menu en même temps.
+
+Corollaire : `min-w-0` sur la zone de contenu. Sans lui, un tableau large pousse ce conteneur flex au-delà de son parent — la valeur par défaut de `min-width` pour un enfant flex est `auto`, donc la taille de son contenu — et c'est **la barre latérale** qui se fait comprimer.
+
+### Le bandeau d'emprunt surmonte tout, barre latérale comprise
+
+**C'est la pièce manquante d'un dispositif de sécurité, pas un ornement.** Tout l'emprunt de compte côté API — lecture seule, trace dans `impersonations`, refus d'emprunter un compte de plateforme — repose sur un postulat : que l'opérateur **sache** dans quel compte il se trouve.
+
+`GET /me` ne le disait pas jusqu'au 30/07. L'emprunt vit dans la session sous `impersonator_id`, et le cookie de session est `HttpOnly` : **aucun JavaScript ne peut le deviner.** L'interface d'un emprunt était indiscernable d'une vraie connexion.
+
+Le bandeau est donc au-dessus de la barre latérale et non dans la zone de contenu : un bandeau qui défile disparaît, précisément au moment où l'on oublie où l'on est. Une mutation qui le déplace sous la barre fait tomber un test.
+
+Il porte l'**ambre en remplissage et le marine en écriture** — 5,79:1 —, un triangle d'avertissement pour que la couleur ne porte pas seule l'information, et la bande de chantier en pied : c'est le seul endroit du produit où son sens est littéral, « zone sous surveillance ».
+
+`role="status"` et non `role="alert"` : un emprunt **dure**. `alert` interromprait la lecture à chaque navigation.
+
+### L'état actif porte deux marques, jamais la couleur seule
+
+Un filet vert de 2 px à gauche, un fond `--green-wash`, et le texte en `--green-strong`. Le filet est **toujours présent**, transparent au repos : sans cela l'apparition de la bordure décalerait le libellé de 2 px à chaque changement d'écran.
+
+`NavLink` pose `aria-current="page"` — c'est cette marque que les technologies d'assistance lisent, et elle ne dépend d'aucune couleur.
+
+### Le filtrage par rôle est un confort, pas une sécurité
+
+Toutes les policies `viewAny` de l'API rendent `true`. Le cloisonnement se joue dans les requêtes, par `TenantScope`, et dans les policies par enregistrement. Cacher une entrée évite de montrer un écran vide ou une action refusée ; **cela ne protège rien.**
+
+Une seule entrée est filtrée aujourd'hui : la grille des droits, réservée au `superadmin` — seul rôle dont `bypassesTenantScope()` est vrai, donc seul à pouvoir la régler. Pour un administrateur, ce serait un tableau de dix-huit cases qu'il ne peut pas toucher, décrivant des profils dont deux ne sont pas le sien.
+
+Et « Mon entreprise » devient « Mes entreprises » pour le `superadmin`, comme dans le logiciel d'origine.
+
+### Ce que `GET /me` doit rendre pour que tout cela tienne
+
+| Clef | Contenu | Employée par |
+|---|---|---|
+| `data` | le compte | pied de barre, « Mon compte » |
+| `emprunt` | `{ par: { id, nom } }` ou `null` | le bandeau |
+| `droits` | les facultés **appliquées** et accordées | les boutons, à partir de la tâche 5 |
+
+`droits` est filtré **deux fois** côté API : par la grille, et par `estApplique()`. Quatre des six droits n'appliquent encore rien. Les annoncer permettrait de masquer un bouton au nom d'un droit qu'aucune policy ne vérifie — **une restriction visible que le serveur n'applique pas inspire une confiance qu'elle ne mérite pas.**
+
+---
+
 ## 9. Le legacy — ce qu'on lui prend, ce qu'on lui laisse
 
 `chantiertr-api/docs/legacy-index.html` est la **seule spécification du comportement métier**.

@@ -1,19 +1,22 @@
-import { useDeconnexion, useSession } from '@/api/auth'
-import { Bouton } from '@/components/ui/Bouton'
-import { Marque } from '@/components/ui/Marque'
+import { useSession } from '@/api/auth'
+import { EnteteEcran } from '@/components/shell/EnteteEcran'
 
 /**
- * Le profil du compte connecte.
+ * « Mon compte » — le profil du compte connecte.
  *
- * ECRAN PROVISOIRE, et il est utile de le dire : la tache 1 doit prouver que
- * `GET /me` remonte, que la garde de route tient et que la deconnexion ferme la
- * session. C'est tout ce que cet ecran fait. Le lot 2 le remplacera par
- * `AppLayout` — barre laterale de 240 px filtree par role, bandeau
- * d'impersonation, menu utilisateur en pied.
+ * IL PORTAIT SON PROPRE EN-TETE ET SA PROPRE DECONNEXION au lot 1, faute de
+ * shell autour de lui. Les deux sont retires : `EnteteEcran` donne le titre, et
+ * la deconnexion vit au pied de la barre laterale, ou elle est a sa place — une
+ * action de session, pas une action d'ecran.
  *
- * Il est neanmoins ecrit A LA DENSITE DU PRODUIT et non en carte vide au centre
- * de l'ecran : en-tete de 56 px, rembourrage de 12 px, lignes de 36 px,
- * surbrillance au survol, filets a la place des ombres — MASTER § 2 et § 6.
+ * IL RESTE PARTIEL. La tache 6 du plan y ajoutera la modification du profil et le
+ * changement de mot de passe, contre `PATCH /account` et `PUT /account/password`.
+ * En lecture seule, il prouve deja ce qu'il doit prouver : `GET /me` remonte, le
+ * contexte se lit, et la densite du produit tient sur un ecran reel.
+ *
+ * Il est ecrit A LA DENSITE DU PRODUIT et non en carte vide au centre de
+ * l'ecran : rembourrage de 12 px, lignes de 36 px, surbrillance au survol, filets
+ * a la place des ombres — MASTER § 2 et § 6.
  *
  * LE REGISTRE PLUTOT QUE LES TUILES. Le prototype affichait ces valeurs en huit
  * pastilles de 190 px arrangees en grille fluide. Elles sont ici en lignes de
@@ -23,57 +26,23 @@ import { Marque } from '@/components/ui/Marque'
  * doit se lire comme un registre, pas comme un tableau web. » L'ecran n'a pas de
  * budget, mais il a la meme regle.
  */
-export function Profil() {
+export function MonCompte() {
   const session = useSession()
-  const deconnexion = useDeconnexion()
 
-  const utilisateur = session.data
-  if (utilisateur == null) return null
+  // La garde de route a deja resolu la session : ce retour ne se produit pas en
+  // pratique, il ne sert qu'a etroitir le type.
+  if (session.data == null) return null
 
-  const initiales = `${utilisateur.prenom.charAt(0)}${utilisateur.nom.charAt(0)}`.toUpperCase()
+  const { utilisateur } = session.data
 
   return (
-    <div className="min-h-screen">
-      {/* MASTER § 2 : `--header-height` vaut 56 px, soit `h-14`. */}
-      <header className="border-line bg-card flex h-14 items-center justify-between border-b px-3">
-        {/* 116 px dans un en-tete de 56 px : le logo garde son rapport 3,52:1,
-            donc 33 px de haut, et il reste de l'air au-dessus et en dessous. */}
-        <Marque largeur={116} />
-
-        <div className="flex items-center gap-2">
-          {/* Les initiales sont en chasse fixe : deux capitales dans un carre de
-              28 px restent centrees quelles qu'elles soient, ce qu'une chasse
-              proportionnelle ne garantit pas. */}
-          <span
-            className="bg-navy text-on-navy grid size-7 place-items-center rounded-4 font-mono text-12 font-semibold"
-            aria-hidden="true"
-          >
-            {initiales}
-          </span>
-          <span className="text-navy hidden text-13 sm:inline">
-            {utilisateur.prenom} {utilisateur.nom}
-          </span>
-          <Bouton
-            variante="neutre"
-            taille="sm"
-            onClick={() => {
-              deconnexion.mutate()
-            }}
-            disabled={deconnexion.isPending}
-          >
-            {deconnexion.isPending ? 'Déconnexion…' : 'Se déconnecter'}
-          </Bouton>
-        </div>
-      </header>
+    <>
+      <EnteteEcran
+        titre="Mon compte"
+        precision="Vos informations, telles que la plateforme les connaît."
+      />
 
       <div className="max-w-[1320px] p-3">
-        <div className="mb-3">
-          <h1 className="text-20">Mon compte</h1>
-          <p className="text-slate mt-1 text-13">
-            Écran provisoire du socle — le shell complet arrive au lot suivant.
-          </p>
-        </div>
-
         <section className="bg-card border-line overflow-hidden rounded-6 border">
           {/* En-tete de panneau a la hauteur d'une ligne de tableau, 36 px. */}
           <div className="border-line bg-bg flex h-9 items-center justify-between gap-3 border-b px-3">
@@ -96,7 +65,7 @@ export function Profil() {
           </dl>
         </section>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -127,7 +96,7 @@ function Ligne({
     <div className="border-line hover:bg-bg grid min-h-9 grid-cols-[minmax(110px,200px)_1fr] items-center gap-3 border-b px-3 last:border-b-0">
       {/* Libelle de colonne : Barlow Condensed, capitales, interlettrage ouvert —
           MASTER § 4. `--slate` sur `--card` vaut 5,44:1. */}
-      <dt className="text-slate font-mono tracking-colonne text-12 uppercase">{cle}</dt>
+      <dt className="text-slate font-display tracking-colonne text-12 uppercase">{cle}</dt>
       <dd
         className={[
           'min-w-0 break-words',
@@ -149,7 +118,7 @@ function Ligne({
  * C'est le seul endroit de l'ecran ou la couleur porte du sens, et elle le porte
  * legitimement : MASTER § 3 reserve le vert et le rouge au sens metier — valide,
  * depasse. Un compte en attente d'invitation prend l'ambre, qui ne s'ecrit jamais
- * et se contente de remplir, avec du marine dessus (7,31:1).
+ * et se contente de remplir, avec du marine dessus (5,79:1).
  *
  * MASTER § 7 : la couleur ne porte pas seule l'information — le libelle de l'API
  * est dans la pastille.

@@ -113,18 +113,113 @@ foi**, pas `tsc --noEmit`.
 
 ---
 
+## Tâche 2 — Shell et navigation · **terminée**
+
+### Préalable : l'API ne disait pas l'essentiel
+
+Le bandeau d'emprunt ne pouvait pas être écrit. L'emprunt vit dans la session
+sous `impersonator_id`, et le cookie de session est `HttpOnly` : **aucun
+JavaScript ne peut le lire.** `GET /me` rendait le compte emprunté sans rien dire
+de l'emprunt — l'interface d'un emprunt était indiscernable d'une vraie connexion
+à ce compte.
+
+Ce n'était pas un manque de confort. Tout le dispositif côté API — lecture seule,
+trace dans `impersonations`, refus d'emprunter un compte de plateforme — repose
+sur le fait que l'opérateur **sache** dans quel compte il se trouve.
+
+`GET /me` rend donc deux clefs de plus, à côté de `data` : `emprunt` et `droits`.
+Dix tests, cinq mutations. Voir la PR API #2.
+
+**Découverte au passage : huit commits n'avaient jamais atteint `main`.** Tout le
+travail d'invitation et de réinitialisation par lien à usage unique, poussé sur
+`feature/s0a-socle-api` après la fusion de la PR #1. Les écrans front livrés à la
+tâche 1 appelaient des routes absentes de `main`. La PR #2 les apporte.
+
+### Ce qui a été livré
+
+`AppLayout` — shell à défilement intérieur —, `BarreLaterale` filtrée par rôle,
+`BandeauEmprunt`, `EnteteEcran`, `Introuvable`, et le menu relevé dans le
+logiciel d'origine. `Profil` devient `MonCompte` et perd son en-tête propre : le
+shell le lui donne, et la déconnexion descend au pied de la barre, où elle est à
+sa place — une action de session, pas une action d'écran.
+
+Cinq `EcranAVenir` occupent les routes des tâches 3 à 5. **Ils doivent avoir
+disparu à la fin du lot.** Ils existent pour que la barre soit traversable :
+avec des entrées qui mènent à une page introuvable, ni la route active ni le
+comportement du bandeau d'un écran à l'autre ne se vérifient.
+
+`DemoSeeder` côté API : six comptes couvrant les six rôles, et **deux
+entreprises adhérentes**. La seconde n'est pas décorative — le socle a été livré
+avec une faille d'accès direct aux contacts d'un autre tenant alors que 400 tests
+étaient verts, parce qu'aucun ne peuplait deux entreprises. Le seeder refuse de
+tourner en production : il pose des mots de passe écrits dans le dépôt.
+
+### Un renoncement délibéré
+
+`useConnexion` ne pose plus le compte dans le cache. `POST /login` rend une
+`UserResource` — le compte seul —, là où le shell a besoin du contexte. Poser le
+compte seul remplirait le cache d'un contexte à moitié vide, et la barre se
+construirait un instant sur `droits: []` avant de se corriger. Une invalidation,
+donc, et un `GET /me` de plus : trente millisecondes sur un événement quotidien,
+contre **une seule forme de session dans l'application**.
+
+### Vérification
+
+**48 tests** (29 → 48). Vérifié aussi contre l'API en marche : connexion en
+super-administrateur, emprunt du compte membre, bascule de la barre latérale
+— « Mon entreprise » au lieu de « Mes entreprises », grille des droits
+disparue —, puis retour par « Reprendre mon compte ».
+
+Géométrie relevée au navigateur : barre 240 px, en-tête 56 px, filet actif
+`#1FA37A` 2 px, fond `#E7F5F0`, texte `#157C5C`, aucune ombre, **aucune
+animation sur la navigation**.
+
+#### La mutation qui a trouvé le vrai trou
+
+Douze mutations. Dix tuaient le bon test du premier coup. Deux ont survécu :
+
+1. **`role="status"` → `role="alert"`** — ma mutation avait modifié le
+   *commentaire* qui explique l'attribut, pas l'attribut. Faute de la
+   contre-épreuve, pas du test. Reprise en ciblant le JSX : cinq tests tombent.
+
+2. **Le shell n'affiche jamais le bandeau** — `contexte.emprunt !== null`
+   remplacé par `false`, et **les 44 tests restaient verts.** `BandeauEmprunt`
+   était testé, `BarreLaterale` était testée, et rien ne prouvait que le shell les
+   BRANCHE. Un dispositif de sécurité parfaitement écrit, et jamais montré.
+
+C'est la forme la plus coûteuse d'angle mort : chaque pièce testée, l'assemblage
+non. `AppLayout.test.tsx` la ferme — quatre tests, dont un sur la position du
+bandeau dans le document, parce qu'un bandeau logé sous la barre latérale
+défilerait avec le contenu.
+
+### Une sonde fautive, notée pour mémoire
+
+Mon premier relevé annonçait une animation sur la navigation. Il testait
+`transitionProperty === 'all'` — or `all` est la valeur **initiale** de CSS,
+présente partout et sans effet tant que la durée vaut `0s`. La bonne question est
+la durée, pas la propriété. Relevé corrigé : zéro élément animé dans le shell.
+
+---
+
 ## Reste à faire
 
 | # | Tâche | État |
 |---|---|---|
-| 2 | Shell, barre latérale filtrée par rôle, bandeau d'impersonation | à faire |
+| 2 | Shell, barre latérale filtrée par rôle, bandeau d'impersonation | **terminée** |
 | 3 | Annuaire des entreprises et fiche | à faire |
 | 4 | Contacts et carnet d'adresses | à faire |
 | 5 | Comptes et grille de droits | à faire |
-| 6 | Mon compte et flux de lien | partiel — les écrans existent, les parcours ne sont pas éprouvés |
+| 6 | Mon compte et flux de lien | partiel — les écrans existent en lecture, l'édition reste à faire |
 | 7 | Quatre parcours Playwright et intégration continue | à faire |
 
 **Arbitrage clos :** Barlow partout, Fira retirée. C'était le dernier point
 typographique en attente.
 
 **Ouvert côté client :** le Superviseur peut-il écrire dans l'annuaire.
+
+**Dette de ce lot, à solder avant sa clôture :** les cinq `EcranAVenir`. Chacun
+est remplacé par une tâche 3, 4 ou 5. S'il en reste un, c'est un écran vide livré.
+
+**En attente côté API :** la PR #2 doit être fusionnée avant que le front ne soit
+déployable — `GET /me` sans `emprunt` ferait un shell sans bandeau, et sans
+`droits` un annuaire des comptes sans boutons.
