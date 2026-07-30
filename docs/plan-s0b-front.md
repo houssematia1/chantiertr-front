@@ -1,5 +1,7 @@
 # Socle front (S0-B) — Plan d'implémentation
 
+**Système de design :** `design-system/MASTER.md` fait foi sur le visuel.
+
 **Périmètre :** le front React du socle. **Le déploiement est explicitement hors lot** — il sera traité en dernier, après les modules métier.
 
 **Dépôt :** `houssematia1/chantiertr-front`
