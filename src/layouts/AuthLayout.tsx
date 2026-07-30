@@ -20,7 +20,7 @@ import { Outlet } from 'react-router'
  */
 export function AuthLayout() {
   return (
-    <div className="bg-background grid min-h-screen place-items-center p-4">
+    <div className="bg-bg grid min-h-screen place-items-center p-4">
       <Outlet />
     </div>
   )

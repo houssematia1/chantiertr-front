@@ -3,24 +3,26 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 /**
  * Bouton du produit.
  *
- * COULEUR. MASTER § 3 : « l'orange est reserve a l'action, et elle seule. » Il
- * n'y a donc qu'UNE variante orange — `action` —, et un ecran qui en affiche
- * deux se trompe sur l'une des deux. Les autres variantes sont grises ou
- * blanches : elles portent des actions secondaires, qui ne doivent pas se
- * disputer le regard avec la principale.
+ * COULEUR. Le vert de l'action est `--green-strong` et NON `--green` : blanc sur
+ * `--green` vaut 3,19:1, quand un libelle de 14 px exige 4,5:1. MASTER § 3 le dit
+ * en une ligne — « aucun texte blanc sur `--green` » — et c'est exactement ce
+ * qu'un bouton est. Le vert de la marque reste `--green` ; il vit dans le logo et
+ * dans les indicateurs de route active, pas sous un libelle blanc.
  *
- * L'orange employe est `--color-accent-fonce` et non `--color-accent`, dont la
- * valeur reste celle de MASTER : blanc sur `#EA580C` vaut 3,56:1, quand un
- * libelle de 13 px exige 4,5:1. Le calcul est dans `tokens.css`.
+ * MASTER § 3 encore : le rouge garde son sens metier. La variante `destructif` ne
+ * decore pas un bouton « Annuler » — elle ne sert qu'a une action qui detruit ou
+ * qui retire.
  *
- * GEOMETRIE. Rayon 4 px — MASTER § 6, « precision, pas douceur ». Aucune ombre :
- * l'elevation est reservee aux modales, un bouton se detache par sa couleur et
- * par son filet.
+ * GEOMETRIE. Rayon 4 px — MASTER § 6, « precision, pas douceur ». Le prototype
+ * arrondissait ses boutons a 10 px ; la charte donne les couleurs, MASTER donne
+ * la geometrie. Aucune ombre : l'elevation est reservee aux modales, un bouton se
+ * detache par sa couleur et par son filet.
  *
  * MOUVEMENT. Un seul effet, et il est obligatoire : `scale(0.97)` sur `:active`,
- * 140 ms — MASTER § 5, « sans lui, l'interface parait morte ». Les proprietes
- * animees sont NOMMEES une par une ; `transition: all` ferait travailler celles
- * qu'on n'a pas voulu animer, a commencer par la geometrie.
+ * 140 ms — MASTER § 5, « sans lui, l'interface parait morte ». Le prototype
+ * n'avait AUCUN retour de clic, et ecrivait `transition: .15s`, soit `all` : ici
+ * les proprietes animees sont nommees une par une, sans quoi la geometrie
+ * travaillerait aussi.
  */
 
 type Variante = 'action' | 'neutre' | 'destructif'
@@ -28,12 +30,10 @@ type Taille = 'md' | 'sm'
 
 const VARIANTES: Record<Variante, string> = {
   // L'action principale. Une par ecran.
-  action: 'bg-accent-fonce text-on-accent hover:bg-accent-tres-fonce',
-  // Actions secondaires : fond de carte, filet, texte courant.
-  neutre: 'bg-card text-foreground border border-border hover:bg-muted',
-  // MASTER § 3 : le rouge garde son sens metier. Il ne decore pas un bouton
-  // « Annuler » — seulement une action qui detruit ou qui retire.
-  destructif: 'bg-card text-destructive border border-destructive hover:bg-muted',
+  action: 'bg-green-strong text-on-green-strong hover:bg-green-deep',
+  // Actions secondaires : fond de carte, filet, texte marine.
+  neutre: 'bg-card text-navy border border-line hover:border-slate',
+  destructif: 'bg-card text-danger border border-danger hover:bg-bg',
 }
 
 /**
@@ -79,10 +79,8 @@ export function Bouton({
         // Retour de clic. Trois proprietes nommees, jamais `all`.
         'transition-[background-color,border-color,transform] duration-140 ease-out',
         'active:scale-[0.97]',
-        // Desactive, il ne repond plus et le dit. `--secondary` n'apparait que
-        // la : WCAG 1.4.3 exempte les composants inactifs du seuil de contraste,
-        // et c'est le seul emploi legitime de cette teinte.
-        'disabled:border-secondary disabled:cursor-not-allowed disabled:opacity-50',
+        // Desactive, il ne repond plus et le dit.
+        'disabled:cursor-not-allowed disabled:opacity-50',
         'disabled:active:scale-100',
         VARIANTES[variante],
         TAILLES[taille],

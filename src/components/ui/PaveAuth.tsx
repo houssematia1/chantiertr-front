@@ -35,7 +35,7 @@ export function PaveAuth({ titre, sousTitre, children }: PaveAuthProps) {
   return (
     <div
       className={[
-        'bg-card border-border w-full max-w-[360px] rounded-6 border p-6',
+        'bg-card border-line w-full max-w-[360px] rounded-6 border p-6',
         'transition-[opacity,transform] duration-200 ease-out',
         'starting:translate-y-1 starting:scale-[0.98] starting:opacity-0',
         'motion-reduce:starting:translate-y-0 motion-reduce:starting:scale-100',
@@ -44,7 +44,7 @@ export function PaveAuth({ titre, sousTitre, children }: PaveAuthProps) {
       <Marque />
 
       <h1 className="mt-5 text-20">{titre}</h1>
-      <p className="text-muted-foreground mt-1 mb-5 text-13">{sousTitre}</p>
+      <p className="text-slate mt-1 mb-5 text-13">{sousTitre}</p>
 
       {children}
     </div>

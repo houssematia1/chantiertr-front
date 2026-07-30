@@ -2,7 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ApiError, ReseauError, SessionError, api } from './http'
 
-const API = 'http://localhost:8000'
+/**
+ * La racine attendue est LUE de l'environnement, comme le fait `http.ts`.
+ *
+ * Elle y etait ecrite en dur, ce qui faisait echouer trois tests des que
+ * `.env.local` pointait ailleurs que sur le port 8000 — l'API de developpement
+ * ecoute sur 8010. Un test qui recopie une valeur de configuration ne verifie
+ * plus le code, il verifie que les deux copies sont d'accord.
+ */
+const API = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 /** Une reponse JSON, comme `fetch` la rendrait. */
 function reponse(status: number, corps: unknown): Response {

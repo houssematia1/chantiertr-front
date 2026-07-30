@@ -48,8 +48,8 @@
   /* MASTER § 2 : corps de 12 a 14 px. 14 px est le defaut du produit — 13 px
    * et 12 px sont demandes explicitement la ou la densite l'exige. */
   body {
-    background: var(--color-background);
-    color: var(--color-foreground);
+    background: var(--color-bg);
+    color: var(--color-navy);
     font-family: var(--font-sans);
     font-size: var(--text-14);
     line-height: var(--leading-corps);
@@ -68,7 +68,7 @@
     font-weight: 600;
     letter-spacing: var(--tracking-titre);
     line-height: var(--leading-titre);
-    color: var(--color-foreground);
+    color: var(--color-navy);
   }
 
   /* Sans cette regle, Safari impose sa propre police aux `input`. */
@@ -88,7 +88,7 @@
    * figure nulle part dans `src/`, et un composant qui veut un anneau different
    * change sa COULEUR, pas son existence.
    *
-   * `--color-ring` vaut 4,76:1 sur `card` et 4,55:1 sur `background`, tres
+   * `--color-ring` (marine) vaut 15,77:1 sur `card` et 14,67:1 sur `bg`, tres
    * au-dela du seuil de 3:1 des elements non textuels.
    */
   :focus-visible {

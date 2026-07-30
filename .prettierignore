@@ -3,3 +3,7 @@ coverage
 node_modules
 package-lock.json
 docs
+
+# Le systeme de design est un document de reference, mis a jour hors du depot
+# front. Le reformater creerait un diff a chaque revision recue.
+design-system

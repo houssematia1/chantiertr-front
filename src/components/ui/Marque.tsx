@@ -1,28 +1,37 @@
 /**
- * Bloc de marque : le glyphe dans son carre, puis le nom sur deux lignes.
+ * Bloc de marque : la feuille dans son carre vert, puis le nom marine sur deux
+ * lignes.
  *
- * LE TRACE VIENT DU LOGO FOURNI par le client — la lentille inclinee, pointue
- * aux deux bouts, posee a gauche d'un nom sur deux lignes. Il ne vient plus de
- * la feuille du logiciel d'origine, ni le `®` qu'elle portait : le logo n'en a
- * pas, et le plan interdit les marques heritees du legacy.
+ * LA CHARTE DU PROTOTYPE EST CONSERVEE — MASTER § 3. Le vert `--green` et le
+ * marine `--navy` sont l'identite de la marque, et le logo fourni par le client
+ * le confirme : une feuille verte, un nom bleu marine sur deux lignes. Le trace
+ * de la feuille est celui du prototype, ligne 4009, repris a l'identique et non
+ * redessine.
  *
- * LA COULEUR, ELLE, VIENT DE MASTER. Le logo est marine et vert ; la palette
- * Construction / Architecture ne connait ni l'un ni l'autre, et MASTER § 3
- * reserve l'orange a l'action — un logo n'est pas une action. Le glyphe prend
- * donc `--primary`, le chrome structurant, et le nom `--foreground`. La FORME
- * reste celle du logo, la teinte celle du systeme : c'est le seul arbitrage
- * possible sans introduire deux hexadecimaux hors palette.
+ * TROIS CHOSES CHANGENT, et aucune n'est une couleur :
  *
- * Le nom est en Fira Code 600 — MASTER § 4 le range dans les titres. Deux
- * lignes avec un interligne de 1.1, comme le logo : 1.5 les separerait.
+ *  - `fill="#fff"` devient `currentColor`. Un hexadecimal en dur dans un
+ *    composant est le premier critere de rejet du plan.
+ *  - le rayon des pastilles passe de 9 et 12 px a 4 px — MASTER § 6 plafonne a
+ *    6 px. La charte donne les couleurs, MASTER donne la geometrie.
+ *  - le `®` disparait. Le logo fourni ne le porte pas ; il venait du prototype,
+ *    et le plan interdit les marques heritees du logiciel d'origine.
+ *
+ * LE BLANC SUR LE VERT est ici un GLYPHE et non du texte : 3,19:1, au-dela du
+ * seuil de 3:1 de MASTER § 7 et sous celui de 4,5:1. C'est pour cela que le jeton
+ * s'appelle `--glyphe-sur-green` — l'employer sur un libelle se verrait a la
+ * relecture. Le nom, lui, est marine sur la surface claire : 15,77:1.
+ *
+ * Le nom est en Fira Code 600 — MASTER § 4 le range dans les titres — avec un
+ * interligne de 1.1 : 1.5 separerait les deux lignes du bloc.
  */
 
 type Echelle = 'connexion' | 'barre'
 
 const ECHELLES: Record<Echelle, { pastille: string; nom: string }> = {
-  // L'ecran sans session : le bloc doit se voir sans etre un titre surdimensionne.
+  // L'ecran sans session : le bloc se voit sans devenir un titre surdimensionne.
   connexion: { pastille: 'size-10', nom: 'text-20' },
-  // Le pied de barre laterale et l'en-tete de 56 px — MASTER § 2.
+  // L'en-tete de 56 px et le pied de barre laterale — MASTER § 2.
   barre: { pastille: 'size-8', nom: 'text-14' },
 }
 
@@ -36,22 +45,21 @@ export function Marque({ echelle = 'connexion' }: MarqueProps) {
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`bg-primary text-on-primary grid shrink-0 place-items-center rounded-4 ${pastille}`}
+        className={`bg-green text-glyphe-sur-green grid shrink-0 place-items-center rounded-4 ${pastille}`}
       >
-        {/* La lentille du logo : deux arcs symetriques entre (5,19) et (19,5).
-            `currentColor` et non un hexadecimal — la teinte vient du parent. */}
         <svg
-          viewBox="0 0 24 24"
+          viewBox="0 0 32 32"
           className="size-[62%]"
           fill="currentColor"
           aria-hidden="true"
           focusable="false"
         >
-          <path d="M5 19A14 14 0 0 1 19 5A14 14 0 0 1 5 19Z" />
+          {/* Trace releve ligne 4009 du prototype. */}
+          <path d="M6 26C6 14 14 6 27 5c1 13-7 21-21 21z" />
         </svg>
       </div>
 
-      <div className={`text-foreground font-mono leading-marque font-semibold ${nom}`}>
+      <div className={`text-navy font-mono leading-marque font-semibold ${nom}`}>
         Chantier
         <br />
         Tranquille

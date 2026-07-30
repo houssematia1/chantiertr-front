@@ -2,36 +2,40 @@
  * Jetons visuels de Chantier Tranquille.
  *
  * SOURCE UNIQUE : `design-system/MASTER.md`. Chaque valeur de ce fichier y est
- * ecrite ; aucune n'est inventee, et les ecarts — il y en a deux — portent leur
- * arithmetique en commentaire.
+ * ecrite ; les rares derivations portent leur arithmetique en commentaire.
  *
- * Ce fichier REMPLACE la couche relevee dans le logiciel d'origine. Le legacy
- * n'est plus une reference visuelle : ses jetons — marine, vert, rayon 14 px,
- * deux couches d'ombre — sont abandonnes. Il ne sert plus que de specification
- * metier (MASTER § 9).
+ * LA PALETTE EST CELLE DU PROTOTYPE — marine et vert. MASTER § 3 : « la charte
+ * graphique du prototype est l'identite de la marque et elle est conservee.
+ * C'est le STYLE du logiciel d'origine qui etait date, pas ses couleurs. »
+ *
+ * Ce que le legacy ne donne PAS et que ce fichier ne lui reprend pas : sa
+ * typographie (il retombait sur la police systeme, et l'echafaudage avait pose
+ * Inter — les deux sont interdites par MASTER § 6), ses rayons de 14 a 18 px,
+ * ses deux couches d'ombre, et son `transition: .15s` qui vaut `all`.
  *
  * Trois namespaces de Tailwind sont REMIS A ZERO avant d'etre redeclares :
  * couleurs, rayons et ombres. C'est le seul moyen de rendre les interdits de
  * MASTER § 6 structurels au lieu de declaratifs : apres cette remise a zero,
  * `bg-violet-500`, `rounded-3xl` et `shadow-lg` ne COMPILENT PLUS. Une regle
- * qu'un linter ne peut pas verifier finit toujours par etre enfreinte ; celle-ci
- * casse la construction.
+ * qu'aucun linter ne verifie finit toujours par etre enfreinte ; celle-ci casse
+ * la construction.
  */
 
 @theme {
   /* ==================================================================
-   * Palette — Construction / Architecture (MASTER § 3)
+   * Palette — la charte du prototype (MASTER § 3)
    *
-   * Gris industriel et orange de securite. Les noms de roles sont ceux du
-   * tableau de MASTER, a l'identique, pour que la correspondance se verifie
-   * ligne a ligne — c'est le seul endroit du projet ou les identifiants ne
-   * sont pas en francais, et c'est un choix de tracabilite.
+   * Les noms de roles sont ceux du tableau de MASTER, a l'identique, pour que la
+   * correspondance se verifie ligne a ligne. C'est le seul endroit du projet ou
+   * les identifiants ne sont pas en francais, et c'est un choix de tracabilite.
    *
    * La remise a zero supprime les 280 couleurs par defaut de Tailwind, `white`
-   * et `black` compris. Une surface blanche s'ecrit donc `bg-card` et un texte
-   * blanc `text-on-accent` : le jeton porte le ROLE, jamais la teinte. C'est
-   * l'exigence « aucun hexadecimal en dur dans un composant » rendue
-   * inevitable.
+   * et `black` compris. Une surface blanche s'ecrit donc `bg-card`, et un texte
+   * blanc `text-on-green-strong` ou `text-on-navy` : le jeton nomme le FOND sur
+   * lequel il est mesure, ce qui rend le couple verifiable a la lecture. C'est
+   * l'exigence « aucun hexadecimal en dur dans un composant » rendue inevitable.
+   *
+   * Tous les ratios ci-dessous sont CALCULES, pas estimes.
    * ================================================================== */
 
   --color-*: initial;
@@ -43,80 +47,80 @@
   --color-current: currentcolor;
   --color-inherit: inherit;
 
-  --color-primary: #64748b; /* Chrome, barre laterale, elements structurants */
-  --color-on-primary: #ffffff;
-  --color-secondary: #94a3b8; /* Elements secondaires */
-  --color-accent: #ea580c; /* L'ACTION, et elle seule. Orange de securite. */
-  --color-on-accent: #ffffff;
-  --color-background: #f8fafc; /* Surface de travail */
-  --color-card: #ffffff; /* Cartes, tableaux */
-  --color-foreground: #334155; /* Texte courant */
-  --color-muted: #ebf0f5; /* Fonds attenues, en-tetes de tableau */
-  --color-muted-foreground: #64748b; /* Texte secondaire, libelles */
-  --color-border: #e2e8f0; /* Filets, separateurs */
-  --color-destructive: #dc2626; /* Suppression, depassement */
-  --color-ring: #64748b; /* Anneau de focus */
+  /* --- Marine : le chrome et le texte -------------------------------- */
+  --color-navy: #13233b; /* 15,77:1 sur card · 14,67:1 sur bg */
+  --color-navy-soft: #2b3e59; /* 10,85:1 sur card — chrome secondaire */
+  --color-slate: #5a6b82; /* 5,44:1 sur card · 5,06:1 sur bg — libelles */
+  --color-on-navy: #ffffff; /* 15,77:1 — texte sur un aplat marine */
+
+  /* --- Vert : la marque, et son sens metier -------------------------- */
+
+  /* LE vert de la marque : logo, indicateur de route active, aplats, badges a
+   * texte fonce. Il ne porte JAMAIS de texte blanc — MASTER § 3. */
+  --color-green: #1fa37a;
+
+  /* Blanc sur `--green` vaut 3,19:1. C'est assez pour un GLYPHE ou un grand
+   * element (seuil 3:1, MASTER § 7) et pas assez pour du texte (seuil 4,5:1).
+   * Le nom du jeton dit `glyphe` pour que l'employer sur un libelle se voie a
+   * la relecture. Le trace du logo est le seul consommateur prevu. */
+  --color-glyphe-sur-green: #ffffff;
+
+  /* Tout ce qui porte du texte blanc — boutons, bandeaux — et le vert ECRIT sur
+   * fond clair. C'est la reponse de MASTER § 3 au probleme de contraste : deux
+   * valeurs par teinte, une pour remplir, une pour ecrire. */
+  --color-green-strong: #157c5c; /* 5,16:1 sur card · 4,80:1 sur bg */
+  --color-on-green-strong: #ffffff; /* 5,16:1 */
+
+  /* Le meme vert, 12 % plus sombre, pour le survol d'un bouton vert. DERIVE et
+   * non nouvelle teinte : `color-mix` part de `--green-strong` lui-meme, donc
+   * un changement de charte le suit. Plus sombre, donc le blanc dessus ne peut
+   * que gagner en contraste — jamais l'inverse. */
+  --color-green-deep: color-mix(in oklab, var(--color-green-strong) 88%, #000);
+
+  --color-green-wash: #e7f5f0; /* Fond valide, texte `--green-strong` (4,60:1) */
+
+  /* --- Surfaces et filets -------------------------------------------- */
+  --color-bg: #f4f7fa; /* Surface de travail */
+  --color-card: #ffffff; /* Cartes, tableaux, panneaux */
+  --color-line: #e3e8ef; /* Filets, separateurs */
+
+  /* --- Rouge et ambre : le sens metier, jamais la decoration --------- */
+
+  /* Ajuste de `#D9534F` a `#C0332F` : l'ancienne valeur ne vaut que 3,96:1 sur
+   * blanc et echouait donc en texte. La nouvelle tient 5,59:1 en texte COMME en
+   * remplissage — une seule valeur suffit, contrairement au vert. */
+  --color-danger: #c0332f; /* 5,59:1 sur card · 5,20:1 sur bg */
+  --color-on-danger: #ffffff; /* 5,59:1 */
+
+  /* REMPLISSAGE UNIQUEMENT. Blanc dessus vaut 2,16:1, et l'ambre lui-meme ne
+   * vaut que 2,16:1 sur blanc : il ne s'ecrit pas, et ne borde rien de
+   * significatif. Le texte qui le surmonte est marine — 7,31:1. */
+  --color-warn-fill: #e8a33d;
+  --color-on-warn-fill: var(--color-navy); /* 7,31:1 */
+
+  /* --- Anneau de focus ---------------------------------------------- */
+  --color-ring: #13233b; /* 15,77:1 sur card · 14,67:1 sur bg */
 
   /* ------------------------------------------------------------------
-   * ECART 1 — `--color-accent-fonce`, et pourquoi il existe.
-   *
-   * MASTER prescrit `--accent: #EA580C` et `--on-accent: #FFFFFF`, et interdit
-   * de revenir a `#F97316`. Ces deux valeurs sont conservees telles quelles.
-   * Mais leur COUPLE ne tient pas le seuil de MASTER § 7 : blanc sur `#EA580C`
-   * vaut 3,56:1, quand un texte de 13 a 14 px exige 4,5:1 (le seuil de 3:1 ne
-   * vaut que pour les grands elements et les glyphes). Un libelle de bouton est
-   * un texte.
-   *
-   * L'accent n'est donc PAS modifie : il garde sa valeur et son emploi — les
-   * grands elements, les glyphes, les filets, la ou 3:1 suffit. Une declinaison
-   * plus sombre de la MEME rampe porte les surfaces qui reçoivent du texte :
-   *
-   *   #C2410C  blanc a 5,18:1  fond du bouton d'action
-   *   #9A3412  blanc a 7,31:1  son survol
-   *   #C2410C  sur `card` a 5,18:1  et sur `background` a 4,95:1 — les liens
-   *
-   * `#EA580C` en texte sur blanc vaudrait 3,56:1 : c'est pourquoi aucun lien,
-   * aucun libelle ne le porte.
-   * ------------------------------------------------------------------ */
-  --color-accent-fonce: #c2410c;
-  --color-accent-tres-fonce: #9a3412;
-
-  /* ------------------------------------------------------------------
-   * ECART 2 — `--color-success`, valeur non fournie.
-   *
-   * MASTER § 3 exige que « le rouge et le vert gardent leur sens metier —
-   * valide, depasse » mais n'en donne pas la valeur. Elle est derivee de la
-   * meme rampe que `--destructive` (#DC2626, rouge 600) et que l'accent
-   * (orange 600), un cran plus sombre : le vert 600 (#16A34A) ne vaut que
-   * 3,05:1 sur blanc, sous le seuil du texte. Le vert 700 vaut 5,02:1.
-   *
-   * Ce jeton ne DECORE jamais. Il ne parait que sur un etat valide, aux cotes
-   * d'un texte qui dit la meme chose — MASTER § 7 : « la couleur ne porte
-   * jamais seule une information ».
-   * ------------------------------------------------------------------ */
-  --color-success: #15803d;
-
-  /* ------------------------------------------------------------------
-   * DEUX COUPLES INTERDITS, mesures et notes ici pour qu'ils ne soient pas
+   * TROIS COUPLES INTERDITS, mesures ici pour qu'ils ne soient pas
    * redecouverts a chaque ecran :
    *
-   *   `muted-foreground` sur `muted`   4,15:1  ->  prendre `foreground` (9,03:1)
-   *   `secondary` sur `card`           2,56:1  ->  jamais de texte, jamais de
-   *                                               glyphe porteur d'information
-   *
-   * `--secondary` ne sert donc qu'aux etats DESACTIVES et aux separateurs
-   * inertes, que WCAG 1.4.3 exempte explicitement. Partout ailleurs, le texte
-   * secondaire est `--muted-foreground` sur `card` (4,76:1) ou sur
-   * `background` (4,55:1).
+   *   blanc sur `--green`          3,19:1  ->  glyphe seulement, jamais de texte
+   *   `--green` sur `--bg`         2,97:1  ->  un glyphe vert se pose sur `card`
+   *                                            (3,19:1), pas sur la surface de
+   *                                            travail : 3 centiemes sous le
+   *                                            seuil restent sous le seuil
+   *   blanc sur `--warn-fill`      2,16:1  ->  le texte sur l'ambre est marine
    * ------------------------------------------------------------------ */
 
   /* ==================================================================
    * Typographie — Fira Code et Fira Sans (MASTER § 4)
    *
    * Inter est INTERDITE par MASTER § 6, avec Roboto et la police systeme :
-   * c'est le marqueur le plus reconnaissable d'une interface generee. La pile
-   * ne retombe sur `system-ui` que pendant le `swap`, le temps du premier
-   * chargement — une pile CSS doit se terminer.
+   * c'est le marqueur le plus reconnaissable d'une interface generee, et c'est
+   * ce que l'echafaudage portait. La pile ne retombe sur `system-ui` que
+   * pendant le `swap`, le temps du premier chargement — une pile CSS doit se
+   * terminer.
    *
    * Les fontes sont AUTO-HEBERGEES (`@fontsource`, voir `index.css`) et non
    * chargees depuis Google Fonts comme le suggere l'extrait de MASTER § 4.
@@ -159,9 +163,14 @@
    *   padding          12 px  ->  `p-3`
    *   gouttiere         8 px  ->  `gap-2`
    *
+   * L'echafaudage posait `--spacing: 1px` pour coller aux espacements impairs
+   * du legacy (9, 11, 13, 17 px). Cette base disparait : MASTER donne des
+   * valeurs paires, et une base de 1 px rendait `p-4` egal a 4 px — un piege
+   * pour quiconque connait Tailwind.
+   *
    * Les variables ci-dessous ne generent pas d'utilitaire : elles donnent leur
-   * NOM a ces cinq mesures, pour qu'un `h-14` isole reste lisible, et servent
-   * la ou une valeur nommee vaut mieux qu'un nombre — `h-(--table-row-height)`.
+   * NOM a ces cinq mesures, pour qu'un `h-14` isole reste lisible, et servent la
+   * ou une valeur nommee vaut mieux qu'un nombre — `h-(--table-row-height)`.
    * ================================================================== */
 
   --sidebar-width: 240px;
@@ -173,8 +182,12 @@
   /* ==================================================================
    * Rayons — 4 a 6 px (MASTER § 6 : « precision, pas douceur »)
    *
-   * La remise a zero emporte `rounded-lg`, `rounded-3xl` et `rounded-full` :
-   * un rayon au-dela de 6 px ne s'ecrit plus. `rounded-none` survit, c'est un
+   * Le prototype allait de 5 a 20 px, avec 14 px sur les cartes et 18 px sur le
+   * pave de connexion. MASTER § 6 plafonne a 6 px, et c'est MASTER qui fait foi
+   * sur le visuel : la charte donne les COULEURS, pas la geometrie.
+   *
+   * La remise a zero emporte `rounded-lg`, `rounded-3xl` et `rounded-full` : un
+   * rayon au-dela de 6 px ne s'ecrit plus. `rounded-none` survit, c'est un
    * utilitaire statique.
    * ================================================================== */
 
@@ -189,14 +202,14 @@
    * « Aucune ombre portee sur la surface de travail. Les filets separent ;
    * l'elevation est reservee aux vrais calques : modales, popovers. »
    *
-   * La remise a zero supprime `shadow-sm` a `shadow-2xl`. Il ne reste que
-   * `shadow-calque`, dont le nom dit ou il a le droit de paraitre. Une carte,
-   * un panneau, un tableau prennent `border border-border`.
+   * La remise a zero supprime `shadow-sm` a `shadow-2xl`, et avec eux les six
+   * ombres relevees dans le prototype. Il ne reste que `shadow-calque`, dont le
+   * nom dit ou il a le droit de paraitre. Une carte, un panneau, un tableau
+   * prennent `border border-line`.
    * ================================================================== */
 
   --shadow-*: initial;
-  --shadow-calque:
-    0 8px 24px -6px rgb(51 65 85 / 0.18), 0 2px 6px -2px rgb(51 65 85 / 0.12);
+  --shadow-calque: 0 8px 24px -6px rgb(19 35 59 / 0.18), 0 2px 6px -2px rgb(19 35 59 / 0.12);
 
   /* ==================================================================
    * Mouvement — reglage 2 sur 10 (MASTER § 5)

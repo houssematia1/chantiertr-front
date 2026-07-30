@@ -68,13 +68,13 @@ export function Champ({
 
   return (
     <div className="mb-3">
-      <label htmlFor={id} className="text-foreground mb-1 block text-13 font-medium">
+      <label htmlFor={id} className="text-navy-soft mb-1 block text-13 font-medium">
         {libelle}
         {/* MASTER § 7 : la couleur ne porte jamais seule une information —
             l'asterisque est un GLYPHE, et le champ est aussi marque `required`
             pour les technologies d'assistance. */}
         {obligatoire && (
-          <span className="text-destructive" aria-hidden="true">
+          <span className="text-danger" aria-hidden="true">
             {' *'}
           </span>
         )}
@@ -86,13 +86,18 @@ export function Champ({
         aria-invalid={erreur === undefined ? undefined : true}
         aria-describedby={decrit === '' ? undefined : decrit}
         className={[
-          'text-foreground bg-card h-11 w-full rounded-4 border px-3 text-14',
-          'placeholder:text-muted-foreground',
-          // La bordure se renforce au focus. L'anneau, lui, vient de la regle
-          // globale : ce composant n'ecrit JAMAIS `outline-none`.
-          'focus:border-primary',
+          'text-navy bg-card h-11 w-full rounded-4 border px-3 text-14',
+          'placeholder:text-slate',
+          // La bordure passe au vert de la marque au focus, comme dans le
+          // prototype. `--green` sur `--card` vaut 3,19:1 : au-dela du seuil de
+          // 3:1 des elements non textuels, et c'est bien une bordure.
+          //
+          // L'ANNEAU, lui, vient de la regle globale `:focus-visible`
+          // d'`index.css`. Ce composant n'ecrit JAMAIS `outline-none` : la
+          // bordure verte est un renfort, pas un remplacement.
+          'focus:border-green',
           'transition-[border-color] duration-150 ease-out',
-          erreur === undefined ? 'border-border' : 'border-destructive',
+          erreur === undefined ? 'border-line' : 'border-danger',
           numerique ? 'chiffres' : '',
           className,
         ]
@@ -106,14 +111,14 @@ export function Champ({
           ne prend aucune hauteur. */}
       <div aria-live="polite">
         {erreur !== undefined && (
-          <p id={idErreur} className="text-destructive mt-1 text-12">
+          <p id={idErreur} className="text-danger mt-1 text-12">
             {erreur}
           </p>
         )}
       </div>
 
       {indication != null && erreur === undefined && (
-        <p id={idIndication} className="text-muted-foreground mt-1 text-12">
+        <p id={idIndication} className="text-slate mt-1 text-12">
           {indication}
         </p>
       )}
