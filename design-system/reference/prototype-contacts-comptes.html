@@ -1,0 +1,322 @@
+<!doctype html>
+<!--
+  PROTOTYPE — contacts et comptes.
+
+  Leur application ne liste PAS ces deux-la en cartes : elle emploie un tableau
+  souple dans une carte de section — `V-FlexTable` dans `V-Card`. Les mesures sont
+  relevees dans `_table.scss`, `_contactManagement.scss`, `ClientContacts.vue` et
+  `Administration/Users.vue`.
+
+  La palette et la typographie sont celles deja validees : marine, vert, ambre,
+  Roboto 300 et Montserrat.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — contacts et comptes</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#157C5C; --primary-fonce:#0F6349;
+  --danger:#C0332F; --warning:#E8A33D; --info:#0F3071; --success:#1FA37A;
+  --page:#F4F7FA; --carte:#FFF; --titre:#0F3071; --texte:#5A6B82;
+  --filet:#E3E8EF; --filet-champ:#7F8EA3; --puce:#E3E8EF;
+  --font:'Roboto',sans-serif; --font-titre:'Montserrat',sans-serif;
+  --r-carte:16px; --r-8:8px; --r-34:34px;
+  --ombre-bouton:0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);font-family:var(--font);font-weight:300;color:var(--texte);-webkit-font-smoothing:antialiased}
+
+.appli{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.laterale{background:var(--carte);border-right:1px solid var(--filet);padding:16px 0}
+.laterale .marque{padding:2px 16px 20px}
+.laterale .marque img{display:block;width:150px;height:auto}
+.laterale h2{font-family:var(--font);font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--texte);padding:0 16px;margin:14px 0 6px}
+.laterale a{display:block;padding:8px 16px;font-size:.9rem;color:var(--titre);text-decoration:none;border-left:3px solid transparent}
+.laterale a:hover{background:var(--page)}
+.laterale a[aria-current]{border-left-color:var(--primary);color:var(--primary);font-weight:500;background:color-mix(in srgb,var(--primary) 8%,transparent)}
+.contenu{padding:24px 28px 40px;min-width:0}
+
+/* ═══ EN-TÊTE D'ÉCRAN ═══ */
+.entete{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.entete h1{font-family:var(--font-titre);font-weight:700;font-size:1.75rem;color:var(--titre);line-height:1.2}
+.entete p{font-size:.85rem;margin-top:2px}
+
+.bouton{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border:1px solid var(--primary);border-radius:var(--r-8);background:var(--primary);color:#fff;font-family:var(--font);font-weight:500;font-size:.9rem;cursor:pointer;box-shadow:var(--ombre-bouton)}
+.bouton:hover{background:var(--primary-fonce)}
+.bouton.neutre{background:var(--carte);color:var(--titre);border-color:var(--filet);box-shadow:none}
+.bouton.neutre:hover{background:var(--page)}
+
+/* ═══ LA CARTE DE SECTION ═══ */
+.section{background:var(--carte);border:1px solid var(--filet);border-radius:var(--r-carte);padding:20px;margin-bottom:20px}
+.section-entete{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.section-entete h2{font-family:var(--font-titre);font-weight:600;font-size:1.05rem;color:var(--titre)}
+.section-entete a{color:var(--primary);font-size:.85rem;font-weight:500;text-decoration:none;cursor:pointer}
+.section-entete a:hover{text-decoration:underline}
+
+.champ{position:relative;flex:0 0 16rem}
+.champ svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--texte)}
+.champ input{width:100%;height:38px;border:1.5px solid var(--filet-champ);border-radius:var(--r-8);background:var(--carte);font:inherit;font-size:.9rem;color:var(--titre);padding:0 12px 0 34px}
+.champ input::placeholder{color:#9aa5b4}
+.champ input:focus{outline:0;border-color:var(--primary)}
+
+/* ═══ LE TABLEAU SOUPLE ═══
+   `.flex-table-header` : 0,8rem, capitales, gris, padding 0 10px 10px.
+   `.flex-table-item`   : min-height 60px, blanc, filet, padding 8px.
+   En mode compact, les lignes forment UN bloc : la premiere arrondit le haut,
+   la derniere le bas, et rien ne les separe que leur filet. */
+.tableau{width:100%}
+.t-entete{display:flex;align-items:center;padding:0 10px}
+.t-entete span{flex:1 1 0;display:flex;align-items:center;font-size:.8rem;font-weight:600;color:#8a93a3;text-transform:uppercase;padding:0 10px 10px}
+.t-entete span.fin{justify-content:flex-end}
+.t-entete span.large{flex-grow:2}
+
+.t-ligne{display:flex;align-items:stretch;width:100%;min-height:60px;background:var(--carte);border:1px solid var(--filet);padding:8px}
+.t-ligne:first-child{border-radius:var(--r-8) var(--r-8) 0 0}
+.t-ligne:last-child{border-radius:0 0 var(--r-8) var(--r-8)}
+.t-ligne:not(:last-child){border-bottom:none}
+.t-ligne:hover{background:var(--page)}
+
+.t-cell{flex:1 1 0;display:flex;align-items:center;gap:8px;padding:0 10px;min-width:0}
+.t-cell.large{flex-grow:2}
+.t-cell.fin{justify-content:flex-end}
+.t-cell .gras{font-weight:500;color:var(--titre)}
+.t-cell .coupe{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.t-cell .num{font-variant-numeric:tabular-nums}
+.t-cell svg{width:15px;height:15px;flex:none;color:var(--texte)}
+
+.puce{background:var(--puce);color:var(--titre);border-radius:var(--r-34);padding:3px 10px;font-size:.78rem;white-space:nowrap}
+.etat{border-radius:var(--r-34);padding:3px 10px;font-size:.78rem;font-weight:500;white-space:nowrap}
+.etat.actif{background:#E7F5F0;color:var(--primary)}
+.etat.invite{background:var(--warning);color:var(--info)}
+.etat.archive{background:var(--danger);color:#fff}
+
+.icone-bouton{width:30px;height:30px;border:1px solid var(--filet);border-radius:6px;background:var(--carte);color:var(--texte);cursor:pointer;display:grid;place-items:center;flex:none}
+.icone-bouton:hover{color:var(--primary);border-color:var(--primary)}
+
+/* ═══ LE MENU D'ACTIONS ═══ */
+.menu{position:relative}
+.menu > .bouton{height:32px;font-size:.82rem}
+.menu-liste{position:absolute;right:0;top:36px;z-index:5;width:290px;background:var(--carte);border:1px solid var(--filet);border-radius:var(--r-8);box-shadow:0 8px 24px -6px rgba(15,48,113,.18);padding:6px;display:none}
+.menu[data-ouvert] .menu-liste{display:block}
+.menu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:6px;text-decoration:none;cursor:pointer}
+.menu-item:hover{background:var(--page)}
+.menu-item .ic{width:28px;height:28px;border-radius:6px;background:color-mix(in srgb,var(--primary) 10%,transparent);color:var(--primary);display:grid;place-items:center;flex:none}
+.menu-item.rouge .ic{background:color-mix(in srgb,var(--danger) 10%,transparent);color:var(--danger)}
+.menu-item b{display:block;font-family:var(--font);font-weight:500;font-size:.87rem;color:var(--titre)}
+.menu-item.rouge b{color:var(--danger)}
+.menu-item span{display:block;font-size:.78rem;line-height:1.3}
+
+.note{border-left:3px solid var(--warning);background:#FFF9EF;padding:10px 14px;border-radius:0 var(--r-8) var(--r-8) 0;font-size:.85rem;margin-bottom:20px}
+.note b{color:var(--titre);font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="appli">
+  <aside class="laterale">
+    <div class="marque"><img src="../../public/logo.webp" width="150" alt="Chantier Tranquille"></div>
+    <h2>Contacts</h2>
+    <a href="#entreprises">Entreprises</a>
+    <a href="#contacts" aria-current="page">Contacts</a>
+    <h2>Administration</h2>
+    <a href="#">Mes entreprises</a>
+    <a href="#comptes">Utilisateurs</a>
+    <a href="#">Grille des droits</a>
+    <a href="#">Mon compte</a>
+  </aside>
+
+  <main class="contenu">
+
+    <!-- ══════════════════ CONTACTS ══════════════════ -->
+    <div class="entete">
+      <div>
+        <h1>Contacts</h1>
+        <p>Les personnes de votre carnet, et celles de vos entreprises.</p>
+      </div>
+      <button class="bouton">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Nouveau contact
+      </button>
+    </div>
+
+    <div class="section">
+      <div class="section-entete">
+        <h2>Contacts <span style="color:var(--texte);font-weight:400">(4)</span></h2>
+        <div class="champ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="search" placeholder="Nom, e-mail, téléphone">
+        </div>
+      </div>
+
+      <div class="tableau">
+        <div class="t-entete">
+          <span class="large">Nom</span>
+          <span>Entreprise</span>
+          <span>Téléphone</span>
+          <span class="large">E-mail</span>
+          <span>Poste</span>
+          <span class="fin">Rôle</span>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3.1-5.5 7-5.5s7 2 7 5.5"/></svg>
+            <span class="gras coupe">Karim Lefebvre</span>
+          </div>
+          <div class="t-cell"><span class="coupe">Bâtir Ensemble</span></div>
+          <div class="t-cell"><span class="num">06 12 45 78 90</span></div>
+          <div class="t-cell large"><span class="coupe">k.lefebvre@batir.test</span></div>
+          <div class="t-cell"><span class="coupe">Conducteur de travaux</span></div>
+          <div class="t-cell fin"><span class="puce">Administrateur</span></div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3.1-5.5 7-5.5s7 2 7 5.5"/></svg>
+            <span class="gras coupe">Sonia Vasseur</span>
+          </div>
+          <div class="t-cell"><span class="coupe">Bâtir Ensemble</span></div>
+          <div class="t-cell"><span class="num">07 55 21 09 43</span></div>
+          <div class="t-cell large"><span class="coupe">s.vasseur@batir.test</span></div>
+          <div class="t-cell"><span class="coupe">Comptable</span></div>
+          <div class="t-cell fin"><span class="puce">Superviseur</span></div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3.1-5.5 7-5.5s7 2 7 5.5"/></svg>
+            <span class="gras coupe">Awa Diallo</span>
+          </div>
+          <div class="t-cell"><span class="coupe">Toitures du Sud</span></div>
+          <div class="t-cell"><span class="num">06 90 12 33 07</span></div>
+          <div class="t-cell large"><span class="coupe">a.diallo@toitures-sud.test</span></div>
+          <div class="t-cell"><span style="color:#9aa5b4">—</span></div>
+          <div class="t-cell fin"><span class="puce">Agent</span></div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3.1-5.5 7-5.5s7 2 7 5.5"/></svg>
+            <span class="gras coupe">Paul Rimbaud</span>
+          </div>
+          <div class="t-cell"><span class="coupe">Loriol Constructions</span></div>
+          <div class="t-cell"><span style="color:#9aa5b4">—</span></div>
+          <div class="t-cell large"><span class="coupe">p.rimbaud@loriol.test</span></div>
+          <div class="t-cell"><span class="coupe">Gérant</span></div>
+          <div class="t-cell fin"><span class="puce">Administrateur</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ COMPTES ══════════════════ -->
+    <div class="entete" id="comptes" style="margin-top:36px">
+      <div>
+        <h1>Utilisateurs</h1>
+        <p>Les comptes de votre organisation.</p>
+      </div>
+      <button class="bouton">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Inviter un compte
+      </button>
+    </div>
+
+    <div class="note">
+      <b>Ce que nous avons en plus de leur écran :</b> le <b>statut</b> — actif, invité, archivé.
+      Leur tableau met une couronne devant le prénom d’un super-administrateur ; le statut dit
+      davantage, et il est déjà dans <code>UserResource</code>.
+    </div>
+
+    <div class="section">
+      <div class="section-entete">
+        <h2>Utilisateurs <span style="color:var(--texte);font-weight:400">(5)</span></h2>
+        <div class="champ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="search" placeholder="Nom, e-mail">
+        </div>
+      </div>
+
+      <div class="tableau">
+        <div class="t-entete">
+          <span class="large">Nom</span>
+          <span class="large">E-mail</span>
+          <span>Téléphone</span>
+          <span>Rôle</span>
+          <span>Statut</span>
+          <span class="fin">Action</span>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large"><span class="gras coupe">Karim Lefebvre</span></div>
+          <div class="t-cell large"><span class="coupe">admin@demo.test</span></div>
+          <div class="t-cell"><span class="num">06 12 45 78 90</span></div>
+          <div class="t-cell"><span class="coupe">Administrateur</span></div>
+          <div class="t-cell"><span class="etat actif">Actif</span></div>
+          <div class="t-cell fin">
+            <div class="menu" data-menu>
+              <button class="bouton neutre" onclick="this.closest('[data-menu]').toggleAttribute('data-ouvert')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></svg>
+                Réglages
+              </button>
+              <div class="menu-liste">
+                <a class="menu-item">
+                  <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
+                  <span><b>Rôle et droits</b><span>Changer le rôle, voir la grille</span></span>
+                </a>
+                <a class="menu-item">
+                  <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.8 12S5.4 5.2 12 5.2 22.2 12 22.2 12 18.6 18.8 12 18.8 1.8 12 1.8 12z"/><circle cx="12" cy="12" r="3.1"/></svg></span>
+                  <span><b>Se connecter en tant que</b><span>Session en lecture seule et tracée</span></span>
+                </a>
+                <a class="menu-item rouge">
+                  <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 8h14M9 8V5h6v3M8 8v11h8V8"/></svg></span>
+                  <span><b>Archiver</b><span>Le compte ne peut plus se connecter</span></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large"><span class="gras coupe">Sonia Vasseur</span></div>
+          <div class="t-cell large"><span class="coupe">superviseur@demo.test</span></div>
+          <div class="t-cell"><span style="color:#9aa5b4">—</span></div>
+          <div class="t-cell"><span class="coupe">Superviseur</span></div>
+          <div class="t-cell"><span class="etat actif">Actif</span></div>
+          <div class="t-cell fin"><button class="bouton neutre" style="height:32px;font-size:.82rem">Réglages</button></div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large"><span class="gras coupe">Thomas Nguyen</span></div>
+          <div class="t-cell large"><span class="coupe">membre@demo.test</span></div>
+          <div class="t-cell"><span class="num">07 41 02 88 15</span></div>
+          <div class="t-cell"><span class="coupe">Membre</span></div>
+          <div class="t-cell"><span class="etat actif">Actif</span></div>
+          <div class="t-cell fin"><button class="bouton neutre" style="height:32px;font-size:.82rem">Réglages</button></div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large"><span class="gras coupe">Léa Marchand</span></div>
+          <div class="t-cell large"><span class="coupe">agent@demo.test</span></div>
+          <div class="t-cell"><span style="color:#9aa5b4">—</span></div>
+          <div class="t-cell"><span class="coupe">Agent</span></div>
+          <div class="t-cell"><span class="etat invite">Invité</span></div>
+          <div class="t-cell fin"><button class="bouton neutre" style="height:32px;font-size:.82rem">Réglages</button></div>
+        </div>
+
+        <div class="t-ligne">
+          <div class="t-cell large"><span class="gras coupe">Hugo Petit</span></div>
+          <div class="t-cell large"><span class="coupe">h.petit@batir.test</span></div>
+          <div class="t-cell"><span style="color:#9aa5b4">—</span></div>
+          <div class="t-cell"><span class="coupe">Membre</span></div>
+          <div class="t-cell"><span class="etat archive">Archivé</span></div>
+          <div class="t-cell fin"><button class="bouton neutre" style="height:32px;font-size:.82rem">Réglages</button></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

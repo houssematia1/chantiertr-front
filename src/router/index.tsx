@@ -3,12 +3,15 @@ import { Navigate, createBrowserRouter } from 'react-router'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { ChoisirMotDePasse } from '@/pages/ChoisirMotDePasse'
 import { Connexion } from '@/pages/Connexion'
+import { Contacts } from '@/pages/Contacts'
 import { EcranAVenir } from '@/pages/EcranAVenir'
 import { Entreprises } from '@/pages/Entreprises'
+import { FicheContact } from '@/pages/FicheContact'
 import { FicheEntreprise } from '@/pages/FicheEntreprise'
 import { Introuvable } from '@/pages/Introuvable'
 import { MonCompte } from '@/pages/MonCompte'
 import { MonEntreprise } from '@/pages/MonEntreprise'
+import { NouveauContact } from '@/pages/NouveauContact'
 import { NouvelleEntreprise } from '@/pages/NouvelleEntreprise'
 import { MotDePasseOublie } from '@/pages/MotDePasseOublie'
 import { GardeDeSession } from '@/router/GardeDeSession'
@@ -27,9 +30,8 @@ import { GardeDeSession } from '@/router/GardeDeSession'
  * valables sept jours.
  *
  * LES `EcranAVenir` RESTANTS DOIVENT AVOIR DISPARU A LA FIN DU LOT S0-B. Il en
- * reste DEUX — contacts (tache 4), comptes et grille des droits (tache 5). La
- * tache 3 a retire les trois autres : annuaire des entreprises, fiche, et « mon
- * entreprise ».
+ * reste DEUX — les comptes et la grille des droits, tache 5. Les taches 3 et 4 ont
+ * retire les quatre autres.
  */
 export const router = createBrowserRouter([
   {
@@ -59,16 +61,11 @@ export const router = createBrowserRouter([
       // pris pour un identifiant, et l'API rendrait 404 sur une fiche inexistante.
       { path: '/entreprises/nouvelle', element: <NouvelleEntreprise /> },
       { path: '/entreprises/:id', element: <FicheEntreprise /> },
-      {
-        path: '/contacts',
-        element: (
-          <EcranAVenir
-            titre="Contacts"
-            tache={4}
-            objet="Les contacts et le carnet d'adresses : la liste, la création, et le retrait du carnet."
-          />
-        ),
-      },
+      { path: '/contacts', element: <Contacts /> },
+
+      // AVANT `/contacts/:id`, sans quoi « nouveau » serait pris pour un identifiant.
+      { path: '/contacts/nouveau', element: <NouveauContact /> },
+      { path: '/contacts/:id', element: <FicheContact /> },
       { path: '/mon-entreprise', element: <MonEntreprise /> },
       {
         path: '/comptes',
