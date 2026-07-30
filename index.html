@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <!--
+      Le fond est pose ici et non attendu du CSS : sans lui, le premier cadre
+      est blanc puis bascule sur `#F4F7FA`. Un clignotement de 20 ms qu'on ne
+      remarque pas mais qu'on sent.
+    -->
+    <style>
+      html {
+        background: #f4f7fa;
+      }
+    </style>
+    <title>Chantier Tranquille</title>
+  </head>
+  <body>
+    <div id="racine"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
