@@ -1,8 +1,39 @@
+/*
+ * Feuille racine.
+ *
+ * ORDRE IMPOSE : les fontes d'abord, Tailwind ensuite, les jetons en dernier.
+ * Les `@font-face` de `@fontsource` doivent etre declares avant que la premiere
+ * regle ne les reclame, et `@theme` doit venir apres `@import 'tailwindcss'`
+ * pour remplacer les namespaces par defaut plutot que d'etre remplace par eux.
+ *
+ * LES SIX SEULES FONTES CHARGEES. `@fontsource` publie 32 variantes par
+ * famille — italiques, cyrillique, grec, vietnamien, neuf graisses. Importer
+ * `fira-sans/index.css` les prendrait toutes. Ici, sous-ensemble latin
+ * uniquement, aucune italique, et les trois graisses que MASTER § 4 nomme :
+ * 400 et 500 pour le texte courant, 600 pour l'emphase et les titres.
+ *
+ * Chaque fichier de `@fontsource` porte deja `font-display: swap` : le texte
+ * s'affiche immediatement dans la pile de repli et bascule des que la fonte
+ * arrive. Rien n'est PRECHARGE — un `<link rel="preload">` par variante mettrait
+ * six fichiers en concurrence avec le module de l'application sur le chemin
+ * critique, pour gagner un `swap` de quelques dizaines de millisecondes.
+ */
+
+/* Texte courant, formulaires — MASTER § 4 */
+@import '@fontsource/fira-sans/latin-400.css';
+@import '@fontsource/fira-sans/latin-500.css';
+@import '@fontsource/fira-sans/latin-600.css';
+
+/* Titres, libelles de colonnes, et TOUS les chiffres — MASTER § 4 */
+@import '@fontsource/fira-code/latin-400.css';
+@import '@fontsource/fira-code/latin-500.css';
+@import '@fontsource/fira-code/latin-600.css';
+
 @import 'tailwindcss';
 @import './tokens.css';
 
 /*
- * Bases globales, relevees ligne 15968-15973 du legacy.
+ * Bases globales.
  *
  * Rien d'autre ne vit ici : les composants portent leurs propres classes
  * utilitaires. Ce fichier ne contient que ce qui ne peut pas s'exprimer en
@@ -10,14 +41,15 @@
  */
 
 @layer base {
-  /* 15969 : le corps est a 14 px, interligne 1.5, lissage active. */
   html {
     -webkit-text-size-adjust: 100%;
   }
 
+  /* MASTER § 2 : corps de 12 a 14 px. 14 px est le defaut du produit — 13 px
+   * et 12 px sont demandes explicitement la ou la densite l'exige. */
   body {
-    background: var(--color-bg);
-    color: var(--color-navy);
+    background: var(--color-background);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     font-size: var(--text-14);
     line-height: var(--leading-corps);
@@ -25,18 +57,21 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* 15970 : les titres sont en 700 avec un interlettrage negatif. */
+  /* MASTER § 4 : les titres sont en Fira Code. C'est ce qui donne au produit son
+   * air d'outil technique plutot que de page web — et c'est pour cela que la
+   * graisse plafonne a 600 : au-dela, une fonte a chasse fixe devient un bloc. */
   h1,
   h2,
   h3,
   h4 {
-    font-weight: 700;
+    font-family: var(--font-mono);
+    font-weight: 600;
     letter-spacing: var(--tracking-titre);
-    color: var(--color-navy);
+    line-height: var(--leading-titre);
+    color: var(--color-foreground);
   }
 
-  /* 15972 : les champs heritent de la police et restent a 14 px. Sans cette
-   * regle, Safari impose sa propre police aux `input`. */
+  /* Sans cette regle, Safari impose sa propre police aux `input`. */
   input,
   select,
   textarea,
@@ -45,10 +80,19 @@
     color: inherit;
   }
 
-  /* Le focus au clavier reste visible partout. Le contour par defaut du
-   * navigateur est remplace au cas par cas, jamais supprime globalement. */
+  /*
+   * MASTER § 7 : « anneau de focus visible, 2 a 4 px. Ne jamais le retirer. »
+   *
+   * Le defaut du navigateur est REMPLACE ici, une fois, par un anneau conforme
+   * a la palette. Aucun composant ne le supprime : `focus:outline-none` ne
+   * figure nulle part dans `src/`, et un composant qui veut un anneau different
+   * change sa COULEUR, pas son existence.
+   *
+   * `--color-ring` vaut 4,76:1 sur `card` et 4,55:1 sur `background`, tres
+   * au-dela du seuil de 3:1 des elements non textuels.
+   */
   :focus-visible {
-    outline: 2px solid var(--color-green);
+    outline: 2px solid var(--color-ring);
     outline-offset: 2px;
   }
 

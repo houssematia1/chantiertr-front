@@ -3,32 +3,54 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 /**
  * Bouton du produit.
  *
- * Geometrie relevee dans le legacy, lignes 16016 a 16026 : coins a 10 px,
- * 13,5 px de texte en 600, 10 px sur 17 px de rembourrage. Ce n'est pas un
- * gros bouton — il est fait pour cohabiter avec cinq autres dans une barre
- * d'actions.
+ * COULEUR. MASTER § 3 : « l'orange est reserve a l'action, et elle seule. » Il
+ * n'y a donc qu'UNE variante orange — `action` —, et un ecran qui en affiche
+ * deux se trompe sur l'une des deux. Les autres variantes sont grises ou
+ * blanches : elles portent des actions secondaires, qui ne doivent pas se
+ * disputer le regard avec la principale.
  *
- * DEUX CORRECTIONS sur la source. Le legacy ecrit `transition:.15s`, soit
- * `all` : chaque propriete animable travaille, y compris celles qu'on n'a pas
- * voulu animer. Ici les proprietes sont nommees. Et le legacy n'a AUCUN retour
- * de clic ; `scale(0.97)` sur `:active` est ajoute, sans quoi l'interface
- * parait morte sous le doigt.
+ * L'orange employe est `--color-accent-fonce` et non `--color-accent`, dont la
+ * valeur reste celle de MASTER : blanc sur `#EA580C` vaut 3,56:1, quand un
+ * libelle de 13 px exige 4,5:1. Le calcul est dans `tokens.css`.
+ *
+ * GEOMETRIE. Rayon 4 px — MASTER § 6, « precision, pas douceur ». Aucune ombre :
+ * l'elevation est reservee aux modales, un bouton se detache par sa couleur et
+ * par son filet.
+ *
+ * MOUVEMENT. Un seul effet, et il est obligatoire : `scale(0.97)` sur `:active`,
+ * 140 ms — MASTER § 5, « sans lui, l'interface parait morte ». Les proprietes
+ * animees sont NOMMEES une par une ; `transition: all` ferait travailler celles
+ * qu'on n'a pas voulu animer, a commencer par la geometrie.
  */
 
-type Variante = 'primary' | 'navy' | 'ghost' | 'danger'
+type Variante = 'action' | 'neutre' | 'destructif'
 type Taille = 'md' | 'sm'
 
-/** Les quatre variantes du legacy, 16017 a 16025. */
 const VARIANTES: Record<Variante, string> = {
-  primary: 'bg-green text-white hover:bg-green-d', // 16017-16018
-  navy: 'bg-navy text-white hover:bg-navy-soft', // 16019-16020
-  ghost: 'bg-white text-navy border border-line hover:border-slate', // 16021-16022
-  danger: 'bg-white text-danger border border-danger-line hover:bg-[#fdf2f2]', // 16024-16025
+  // L'action principale. Une par ecran.
+  action: 'bg-accent-fonce text-on-accent hover:bg-accent-tres-fonce',
+  // Actions secondaires : fond de carte, filet, texte courant.
+  neutre: 'bg-card text-foreground border border-border hover:bg-muted',
+  // MASTER § 3 : le rouge garde son sens metier. Il ne decore pas un bouton
+  // « Annuler » — seulement une action qui detruit ou qui retire.
+  destructif: 'bg-card text-destructive border border-destructive hover:bg-muted',
 }
 
+/**
+ * Deux hauteurs, et leur ecart n'est pas cosmetique.
+ *
+ * `md` fait 44 px : c'est la cible tactile minimale de MASTER § 7, et c'est la
+ * taille des boutons de formulaire — y compris sur les ecrans sans session,
+ * ouverts depuis un telephone dans un bureau de chantier.
+ *
+ * `sm` fait 36 px, soit exactement `--table-row-height` : c'est la taille des
+ * boutons qui vivent DANS une barre d'actions ou une ligne de tableau, ou une
+ * cible de 44 px casserait la densite que MASTER § 2 exige. 36 px reste tres
+ * au-dela du minimum de 24 px de WCAG 2.5.8.
+ */
 const TAILLES: Record<Taille, string> = {
-  md: 'px-17 py-10 text-13.5 rounded-10', // 16016
-  sm: 'px-12 py-7 text-12.5 rounded-8', // 16023
+  md: 'h-11 px-4 text-14 rounded-4',
+  sm: 'h-9 px-3 text-13 rounded-4',
 }
 
 export interface BoutonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -40,7 +62,7 @@ export interface BoutonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Bouton({
-  variante = 'primary',
+  variante = 'action',
   taille = 'md',
   pleineLargeur = false,
   className = '',
@@ -52,18 +74,19 @@ export function Bouton({
     <button
       type={type}
       className={[
-        // 16016 : le bouton est une ligne, il ne se coupe jamais.
-        'inline-flex items-center gap-7 font-semibold whitespace-nowrap',
-        // Retour de clic. `duration-140` est dans la fourchette 100-160 ms, et
-        // les proprietes sont nommees une par une — jamais `all`.
+        // Un bouton est une ligne : il ne se coupe jamais.
+        'inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap',
+        // Retour de clic. Trois proprietes nommees, jamais `all`.
         'transition-[background-color,border-color,transform] duration-140 ease-out',
         'active:scale-[0.97]',
-        // 16026 : desactive, il ne repond plus et le dit.
-        'disabled:cursor-not-allowed disabled:opacity-40 disabled:grayscale-[0.3]',
+        // Desactive, il ne repond plus et le dit. `--secondary` n'apparait que
+        // la : WCAG 1.4.3 exempte les composants inactifs du seuil de contraste,
+        // et c'est le seul emploi legitime de cette teinte.
+        'disabled:border-secondary disabled:cursor-not-allowed disabled:opacity-50',
         'disabled:active:scale-100',
         VARIANTES[variante],
         TAILLES[taille],
-        pleineLargeur ? 'w-full justify-center' : '',
+        pleineLargeur ? 'w-full' : '',
         className,
       ]
         .filter(Boolean)

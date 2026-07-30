@@ -1,25 +1,29 @@
 /**
- * Bloc de marque : la feuille dans son carre vert, puis le nom sur deux lignes.
+ * Bloc de marque : le glyphe dans son carre, puis le nom sur deux lignes.
  *
- * Le trace de la feuille est celui du legacy, ligne 4009 — repris a
- * l'identique, pas redessine. Le logo fourni par le client le confirme : une
- * feuille verte, un nom bleu marine sur deux lignes.
+ * LE TRACE VIENT DU LOGO FOURNI par le client — la lentille inclinee, pointue
+ * aux deux bouts, posee a gauche d'un nom sur deux lignes. Il ne vient plus de
+ * la feuille du logiciel d'origine, ni le `®` qu'elle portait : le logo n'en a
+ * pas, et le plan interdit les marques heritees du legacy.
  *
- * Deux tailles seulement, celles de la source : le pave de connexion (46 px de
- * pastille, 20 px de nom — 16002 et 4009) et la barre laterale (34 px de
- * pastille, 17 px de nom — 15979 et 15980). La seconde servira au lot 2.
+ * LA COULEUR, ELLE, VIENT DE MASTER. Le logo est marine et vert ; la palette
+ * Construction / Architecture ne connait ni l'un ni l'autre, et MASTER § 3
+ * reserve l'orange a l'action — un logo n'est pas une action. Le glyphe prend
+ * donc `--primary`, le chrome structurant, et le nom `--foreground`. La FORME
+ * reste celle du logo, la teinte celle du systeme : c'est le seul arbitrage
+ * possible sans introduire deux hexadecimaux hors palette.
+ *
+ * Le nom est en Fira Code 600 — MASTER § 4 le range dans les titres. Deux
+ * lignes avec un interligne de 1.1, comme le logo : 1.5 les separerait.
  */
 
 type Echelle = 'connexion' | 'barre'
 
-const ECHELLES: Record<
-  Echelle,
-  { pastille: string; feuille: number; nom: string; marque: string }
-> = {
-  // 16002 : 46 x 46, rayon 12. 4009 : nom a 20 px, `®` a 12 px.
-  connexion: { pastille: 'size-46 rounded-12', feuille: 26, nom: 'text-20', marque: 'text-12' },
-  // 15979 : 34 x 34, rayon 9. 15980 : nom a 17 px, `®` a 11 px.
-  barre: { pastille: 'size-34 rounded-9', feuille: 20, nom: 'text-17', marque: 'text-11' },
+const ECHELLES: Record<Echelle, { pastille: string; nom: string }> = {
+  // L'ecran sans session : le bloc doit se voir sans etre un titre surdimensionne.
+  connexion: { pastille: 'size-10', nom: 'text-20' },
+  // Le pied de barre laterale et l'en-tete de 56 px — MASTER § 2.
+  barre: { pastille: 'size-8', nom: 'text-14' },
 }
 
 export interface MarqueProps {
@@ -27,31 +31,30 @@ export interface MarqueProps {
 }
 
 export function Marque({ echelle = 'connexion' }: MarqueProps) {
-  const { pastille, feuille, nom, marque } = ECHELLES[echelle]
+  const { pastille, nom } = ECHELLES[echelle]
 
   return (
-    // 16001 : `.login-brand { display:flex; align-items:center; gap:13px }`
-    <div className="flex items-center gap-13">
-      <div className={`bg-green grid shrink-0 place-items-center ${pastille}`}>
+    <div className="flex items-center gap-2">
+      <div
+        className={`bg-primary text-on-primary grid shrink-0 place-items-center rounded-4 ${pastille}`}
+      >
+        {/* La lentille du logo : deux arcs symetriques entre (5,19) et (19,5).
+            `currentColor` et non un hexadecimal — la teinte vient du parent. */}
         <svg
-          viewBox="0 0 32 32"
-          width={feuille}
-          height={feuille}
-          fill="#fff"
+          viewBox="0 0 24 24"
+          className="size-[62%]"
+          fill="currentColor"
           aria-hidden="true"
           focusable="false"
         >
-          {/* Trace releve ligne 4009. */}
-          <path d="M6 26C6 14 14 6 27 5c1 13-7 21-21 21z" />
+          <path d="M5 19A14 14 0 0 1 19 5A14 14 0 0 1 5 19Z" />
         </svg>
       </div>
 
-      {/* 4009 : graisse 800, interligne 1.05, nom sur deux lignes. */}
-      <div className={`text-navy font-extrabold ${nom} leading-marque`}>
+      <div className={`text-foreground font-mono leading-marque font-semibold ${nom}`}>
         Chantier
         <br />
         Tranquille
-        <span className={`align-super ${marque}`}>®</span>
       </div>
     </div>
   )

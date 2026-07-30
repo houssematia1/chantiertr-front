@@ -1,199 +1,249 @@
 /*
  * Jetons visuels de Chantier Tranquille.
  *
- * TOUTES les valeurs de ce fichier sont RELEVEES dans l'application d'origine
- * — `chantiertr-api/docs/legacy-index.html`, bloc `<style>` des lignes 15951 a
- * 16427. Aucune n'est inventee. Chaque groupe porte sa ligne d'origine, pour
- * qu'un ecart se constate au lieu de se discuter.
+ * SOURCE UNIQUE : `design-system/MASTER.md`. Chaque valeur de ce fichier y est
+ * ecrite ; aucune n'est inventee, et les ecarts — il y en a deux — portent leur
+ * arithmetique en commentaire.
  *
- * Le registre tient dans deux chiffres : le rayon des cartes est de 14 px et
- * l'ombre plafonne a 6 % d'opacite. Sobre, dense, professionnel — un outil de
- * travail, pas une vitrine.
+ * Ce fichier REMPLACE la couche relevee dans le logiciel d'origine. Le legacy
+ * n'est plus une reference visuelle : ses jetons — marine, vert, rayon 14 px,
+ * deux couches d'ombre — sont abandonnes. Il ne sert plus que de specification
+ * metier (MASTER § 9).
+ *
+ * Trois namespaces de Tailwind sont REMIS A ZERO avant d'etre redeclares :
+ * couleurs, rayons et ombres. C'est le seul moyen de rendre les interdits de
+ * MASTER § 6 structurels au lieu de declaratifs : apres cette remise a zero,
+ * `bg-violet-500`, `rounded-3xl` et `shadow-lg` ne COMPILENT PLUS. Une regle
+ * qu'un linter ne peut pas verifier finit toujours par etre enfreinte ; celle-ci
+ * casse la construction.
  */
 
 @theme {
-  /* ------------------------------------------------------------------
-   * Couleurs — legacy 15952-15964
+  /* ==================================================================
+   * Palette — Construction / Architecture (MASTER § 3)
    *
-   * Bleu marine et vert. Le prefixe `--orvea-*` du legacy disparait : c'est
-   * une marque tierce, et le plan l'interdit. La valeur, elle, ne change pas.
-   * ------------------------------------------------------------------ */
-
-  /* 15953-15955 */
-  --color-green: #1fa37a;
-  --color-green-d: #157c5c;
-  --color-green-l: #e7f5f0;
-
-  /* 15956-15958 */
-  --color-navy: #13233b;
-  --color-navy-soft: #2b3e59;
-  --color-slate: #5a6b82;
-
-  /* 15959-15961 */
-  --color-line: #e3e8ef;
-  --color-bg: #f4f7fa;
-  --color-card: #ffffff;
-
-  /* 15962-15964 */
-  --color-warn: #e8a33d;
-  --color-danger: #d9534f;
-  --color-ok: #1fa37a;
-
-  /* Gris de structure recurrents, releves dans les composants :
-   * en-tete de tableau 16137, survol de ligne 16142, filet interne 16232,
-   * pastille neutre 16054, bordure sur fond vert 16107 et 16209. */
-  --color-thead: #eef2f7;
-  --color-row-hover: #fafbfd;
-  --color-line-soft: #f0f3f7;
-  --color-chip: #eef1f5;
-  --color-green-line: #bfe6d8;
-  --color-green-line-soft: #cdeadf;
-  --color-danger-line: #f1c6c4;
-
-  /* ------------------------------------------------------------------
-   * Typographie — legacy 15969 (corps) et sizes releves un a un
+   * Gris industriel et orange de securite. Les noms de roles sont ceux du
+   * tableau de MASTER, a l'identique, pour que la correspondance se verifie
+   * ligne a ligne — c'est le seul endroit du projet ou les identifiants ne
+   * sont pas en francais, et c'est un choix de tracabilite.
    *
-   * Le corps est a 14 px et le titre de page a 25 px : l'ecart total de
-   * l'echelle tient dans un facteur 1,8. C'est ce resserrement qui fait la
-   * densite — pas de titre surdimensionne, jamais.
-   *
-   * L'echelle progresse par demi-pixels de 9,5 a 14 px, la ou le texte
-   * d'interface se joue, puis par pas entiers. Ces demi-pixels ne sont pas
-   * une coquetterie : ils sont dans la source, et les arrondir tasserait
-   * l'echelle.
-   * ------------------------------------------------------------------ */
+   * La remise a zero supprime les 280 couleurs par defaut de Tailwind, `white`
+   * et `black` compris. Une surface blanche s'ecrit donc `bg-card` et un texte
+   * blanc `text-on-accent` : le jeton porte le ROLE, jamais la teinte. C'est
+   * l'exigence « aucun hexadecimal en dur dans un composant » rendue
+   * inevitable.
+   * ================================================================== */
 
-  /* Le legacy ne charge PAS Inter (seul `Dancing Script` est importe, 16425) :
-   * la pile retombe donc sur la police systeme. Elle est reprise a
-   * l'identique pour que les captures soient comparables. */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --color-*: initial;
 
-  --text-9\.5: 9.5px; /* 16089, 16313 */
-  --text-10: 10px; /* 15981, 15983, 16310, 16388 */
-  --text-10\.5: 10.5px; /* 16037, 16043, 16153, 16258, 16297 */
-  --text-11: 11px; /* 15988, 16091, 16137, 16210, 16278, 16384 */
-  --text-11\.5: 11.5px; /* 16003, 16040, 16104, 16164, 16304 */
-  --text-12: 12px; /* 16064, 16099, 16216, 16260, 16318 */
-  --text-12\.5: 12.5px; /* 16023, 16074, 16172, 16231, 16355 */
-  --text-13: 13px; /* 16008, 16066, 16136, 16204, 16383 */
-  --text-13\.5: 13.5px; /* 16016, 16031, 16286, 16324, 16418 */
-  --text-14: 14px; /* 15969 — le CORPS, et le defaut du produit */
-  --text-15: 15px; /* 15987, 16042, 16106, 16395 */
-  --text-15\.5: 15.5px; /* 16098 */
-  --text-16: 16px; /* 16039 */
-  --text-17: 17px; /* 15979, 15980 */
-  --text-18: 18px; /* 15989, 16105, 16135, 16211 */
-  --text-19: 19px; /* 16178 */
-  --text-20: 20px; /* 16070, 16270, 16309 — et le titre de connexion, 4009 */
-  --text-22: 22px; /* 16305 */
-  --text-23: 23px; /* 16165 */
-  --text-25: 25px; /* 16030 — LE PLUS GROS TEXTE DU PRODUIT */
-  --text-26: 26px; /* 16215 */
-  --text-40: 40px; /* 16057, 16188 — pictogrammes d'etat vide seulement */
+  /* Les trois mots-cles CSS ne sont pas des couleurs de la palette : ils
+   * n'expriment aucune teinte et restent necessaires (`border-transparent`,
+   * `fill-current`). */
+  --color-transparent: transparent;
+  --color-current: currentcolor;
+  --color-inherit: inherit;
 
-  /* Interlignes releves : 1.5 sur le corps (15969), 1.05 sur le bloc de
-   * marque du pave de connexion (4009), 1.7 sur la convention imprimee
-   * (16177). */
-  --leading-marque: 1.05;
-  --leading-corps: 1.5;
-  --leading-doc: 1.7;
-
-  /* Graisses : 700 sur les titres (15970), 800 sur la marque et les chiffres
-   * (15979, 16165, 16305). Interlettrage negatif sur les titres (15970) et
-   * positif sur les sur-titres capitales (15983). */
-  --tracking-titre: -0.01em; /* 15970 */
-  --tracking-chiffre: -0.02em; /* 16165 */
-  --tracking-surtitre: 0.14em; /* 15983 */
-  --tracking-marque: 0.16em; /* 15981 */
+  --color-primary: #64748b; /* Chrome, barre laterale, elements structurants */
+  --color-on-primary: #ffffff;
+  --color-secondary: #94a3b8; /* Elements secondaires */
+  --color-accent: #ea580c; /* L'ACTION, et elle seule. Orange de securite. */
+  --color-on-accent: #ffffff;
+  --color-background: #f8fafc; /* Surface de travail */
+  --color-card: #ffffff; /* Cartes, tableaux */
+  --color-foreground: #334155; /* Texte courant */
+  --color-muted: #ebf0f5; /* Fonds attenues, en-tetes de tableau */
+  --color-muted-foreground: #64748b; /* Texte secondaire, libelles */
+  --color-border: #e2e8f0; /* Filets, separateurs */
+  --color-destructive: #dc2626; /* Suppression, depassement */
+  --color-ring: #64748b; /* Anneau de focus */
 
   /* ------------------------------------------------------------------
-   * Espacement — base 1 px
+   * ECART 1 — `--color-accent-fonce`, et pourquoi il existe.
    *
-   * ARBITRAGE. Le legacy n'a PAS de grille de 4 px : il espace en 9, 11, 13,
-   * 17, 22, 34 px (15978, 16016, 16038, 16000...). Aligner ces valeurs sur
-   * une grille de 4 px les ferait toutes monter — et « des espacements
-   * doubles de ce qu'il faut » est precisement le defaut contre lequel ce lot
-   * existe.
+   * MASTER prescrit `--accent: #EA580C` et `--on-accent: #FFFFFF`, et interdit
+   * de revenir a `#F97316`. Ces deux valeurs sont conservees telles quelles.
+   * Mais leur COUPLE ne tient pas le seuil de MASTER § 7 : blanc sur `#EA580C`
+   * vaut 3,56:1, quand un texte de 13 a 14 px exige 4,5:1 (le seuil de 3:1 ne
+   * vaut que pour les grands elements et les glyphes). Un libelle de bouton est
+   * un texte.
    *
-   * La base est donc de 1 px : `px-17 py-10` sur un bouton EST la ligne
-   * 16016, lisible telle quelle dans la classe. Le prix a payer est que `p-4`
-   * vaut 4 px et non 16 px — contre-intuitif pour qui connait Tailwind, et
-   * c'est le seul endroit du projet ou l'echelle par defaut est remplacee.
+   * L'accent n'est donc PAS modifie : il garde sa valeur et son emploi — les
+   * grands elements, les glyphes, les filets, la ou 3:1 suffit. Une declinaison
+   * plus sombre de la MEME rampe porte les surfaces qui reçoivent du texte :
+   *
+   *   #C2410C  blanc a 5,18:1  fond du bouton d'action
+   *   #9A3412  blanc a 7,31:1  son survol
+   *   #C2410C  sur `card` a 5,18:1  et sur `background` a 4,95:1 — les liens
+   *
+   * `#EA580C` en texte sur blanc vaudrait 3,56:1 : c'est pourquoi aucun lien,
+   * aucun libelle ne le porte.
    * ------------------------------------------------------------------ */
-  --spacing: 1px;
+  --color-accent-fonce: #c2410c;
+  --color-accent-tres-fonce: #9a3412;
 
   /* ------------------------------------------------------------------
-   * Rayons — legacy 15966 pour `--radius`, le reste releve au composant
+   * ECART 2 — `--color-success`, valeur non fournie.
    *
-   * 14 px, pas 24. Les cles portent leur valeur pour rester tracables.
+   * MASTER § 3 exige que « le rouge et le vert gardent leur sens metier —
+   * valide, depasse » mais n'en donne pas la valeur. Elle est derivee de la
+   * meme rampe que `--destructive` (#DC2626, rouge 600) et que l'accent
+   * (orange 600), un cran plus sombre : le vert 600 (#16A34A) ne vaut que
+   * 3,05:1 sur blanc, sous le seuil du texte. Le vert 700 vaut 5,02:1.
+   *
+   * Ce jeton ne DECORE jamais. Il ne parait que sur un etat valide, aux cotes
+   * d'un texte qui dit la meme chose — MASTER § 7 : « la couleur ne porte
+   * jamais seule une information ».
    * ------------------------------------------------------------------ */
-  --radius-5: 5px; /* 16182, 16388 */
-  --radius-6: 6px; /* 16264, 16353 */
-  --radius-7: 7px; /* 16127, 16150, 16204 */
-  --radius-8: 8px; /* 15984, 16023, 16080, 16395 */
-  --radius-9: 9px; /* 15979, 16003, 16340, 16344 */
-  --radius-10: 10px; /* 16016, 16076 — BOUTONS ET CHAMPS */
-  --radius-11: 11px; /* 16103, 16268, 16418 */
-  --radius-12: 12px; /* 16002, 16084, 16121, 16212 */
-  --radius-13: 13px; /* 16133, 16161, 16276 */
-  --radius-14: 14px; /* 15966 — `--radius`, LE RAYON DES CARTES */
-  --radius-18: 18px; /* 16000, 16062 — pave de connexion et modale */
-  --radius-pill: 20px; /* 16037, 16043, 16153 — pastilles */
+  --color-success: #15803d;
 
   /* ------------------------------------------------------------------
-   * Ombres — legacy 15965 et suivantes
+   * DEUX COUPLES INTERDITS, mesures et notes ici pour qu'ils ne soient pas
+   * redecouverts a chaque ecran :
    *
-   * ECART RELEVE. Le plan annonce « une ombre, discrete, une seule » et cite
-   * `0 1px 3px rgba(19,35,59,.06)`. La source en porte DEUX couches (15965) :
-   * la seconde est un halo large a 5 % d'opacite. Le fichier suit la source.
-   * « A peine visible » reste vrai ; « unique » ne l'est pas.
+   *   `muted-foreground` sur `muted`   4,15:1  ->  prendre `foreground` (9,03:1)
+   *   `secondary` sur `card`           2,56:1  ->  jamais de texte, jamais de
+   *                                               glyphe porteur d'information
+   *
+   * `--secondary` ne sert donc qu'aux etats DESACTIVES et aux separateurs
+   * inertes, que WCAG 1.4.3 exempte explicitement. Partout ailleurs, le texte
+   * secondaire est `--muted-foreground` sur `card` (4,76:1) ou sur
+   * `background` (4,55:1).
    * ------------------------------------------------------------------ */
-  --shadow-card: 0 1px 3px rgb(19 35 59 / 0.06), 0 8px 24px rgb(19 35 59 / 0.05); /* 15965 */
-  --shadow-flat: 0 1px 3px rgb(19 35 59 / 0.05); /* 16283 */
-  --shadow-kpi: 0 2px 8px rgb(19 35 59 / 0.06); /* 16303 */
-  --shadow-lift: 0 4px 12px rgb(19 35 59 / 0.1); /* 16269, 16285 */
-  --shadow-hover: 0 12px 30px rgb(19 35 59 / 0.1); /* 16035 */
-  --shadow-modal: 0 30px 80px rgb(0 0 0 / 0.3); /* 16062 */
 
-  /* ------------------------------------------------------------------
-   * Mouvement
+  /* ==================================================================
+   * Typographie — Fira Code et Fira Sans (MASTER § 4)
    *
-   * Les COURBES ne sont PAS dans la source : le legacy ecrit
-   * `transition:.15s`, soit `all` avec la courbe `ease` par defaut. Les deux
-   * sont a corriger — `all` fait travailler des proprietes qu'on n'a pas
-   * nommees, et les courbes natives sont trop molles. Les valeurs viennent du
-   * plan (§ « Ce que dit la philosophie d'Emil »).
+   * Inter est INTERDITE par MASTER § 6, avec Roboto et la police systeme :
+   * c'est le marqueur le plus reconnaissable d'une interface generee. La pile
+   * ne retombe sur `system-ui` que pendant le `swap`, le temps du premier
+   * chargement — une pile CSS doit se terminer.
    *
-   * `--ease-out` remplace la courbe de sortie par defaut de Tailwind, de sorte
-   * que la classe `ease-out` porte la bonne valeur partout.
-   * ------------------------------------------------------------------ */
+   * Les fontes sont AUTO-HEBERGEES (`@fontsource`, voir `index.css`) et non
+   * chargees depuis Google Fonts comme le suggere l'extrait de MASTER § 4.
+   * Trois raisons, dans cet ordre : un `@import` de feuille distante bloque
+   * l'analyse du CSS ; hotlinker Google Fonts transmet l'adresse IP du
+   * visiteur a un tiers, ce que la CNIL a juge illicite — et le produit est un
+   * SaaS francais ; un bureau de chantier derriere un proxy filtrant
+   * retomberait sur la police systeme, precisement l'interdit § 6.
+   * ================================================================== */
+
+  --font-sans: 'Fira Sans', system-ui, sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, monospace;
+
+  /* Echelle de MASTER § 4 : 12 · 13 · 14 · 16 · 20 · 24. Six valeurs, et le
+   * rapport du plus grand au plus petit tient dans un facteur 2. C'est ce
+   * resserrement qui fait la densite — « aucun titre surdimensionne ». */
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-20: 20px;
+  --text-24: 24px;
+
+  --leading-corps: 1.5; /* MASTER § 4, texte courant */
+  --leading-titre: 1.25;
+  --leading-marque: 1.1; /* Le nom sur deux lignes, comme le logo fourni */
+
+  --tracking-titre: -0.01em;
+  --tracking-colonne: 0.04em; /* Libelles de colonnes en capitales */
+
+  /* ==================================================================
+   * Densite — style Data-Dense Dashboard (MASTER § 2)
+   *
+   * Les cinq valeurs de MASTER tombent EXACTEMENT sur la grille de 4 px de
+   * Tailwind, ce qui evite d'avoir a remplacer l'echelle d'espacement :
+   *
+   *   barre laterale  240 px  ->  `w-60`
+   *   en-tete          56 px  ->  `h-14`
+   *   ligne de tableau 36 px  ->  `h-9`
+   *   padding          12 px  ->  `p-3`
+   *   gouttiere         8 px  ->  `gap-2`
+   *
+   * Les variables ci-dessous ne generent pas d'utilitaire : elles donnent leur
+   * NOM a ces cinq mesures, pour qu'un `h-14` isole reste lisible, et servent
+   * la ou une valeur nommee vaut mieux qu'un nombre — `h-(--table-row-height)`.
+   * ================================================================== */
+
+  --sidebar-width: 240px;
+  --header-height: 56px;
+  --table-row-height: 36px;
+  --card-padding: 12px;
+  --grid-gap: 8px;
+
+  /* ==================================================================
+   * Rayons — 4 a 6 px (MASTER § 6 : « precision, pas douceur »)
+   *
+   * La remise a zero emporte `rounded-lg`, `rounded-3xl` et `rounded-full` :
+   * un rayon au-dela de 6 px ne s'ecrit plus. `rounded-none` survit, c'est un
+   * utilitaire statique.
+   * ================================================================== */
+
+  --radius-*: initial;
+  --radius-4: 4px; /* Champs, boutons, pastilles */
+  --radius-5: 5px;
+  --radius-6: 6px; /* Cartes, panneaux — le plus grand du produit */
+
+  /* ==================================================================
+   * Ombres — une seule, et elle est reservee (MASTER § 6)
+   *
+   * « Aucune ombre portee sur la surface de travail. Les filets separent ;
+   * l'elevation est reservee aux vrais calques : modales, popovers. »
+   *
+   * La remise a zero supprime `shadow-sm` a `shadow-2xl`. Il ne reste que
+   * `shadow-calque`, dont le nom dit ou il a le droit de paraitre. Une carte,
+   * un panneau, un tableau prennent `border border-border`.
+   * ================================================================== */
+
+  --shadow-*: initial;
+  --shadow-calque:
+    0 8px 24px -6px rgb(51 65 85 / 0.18), 0 2px 6px -2px rgb(51 65 85 / 0.12);
+
+  /* ==================================================================
+   * Mouvement — reglage 2 sur 10 (MASTER § 5)
+   *
+   * Deux courbes, et la remise a zero supprime les autres : `ease-in` et
+   * `ease-linear` ne s'ecrivent plus. Ce n'est pas un oubli — une courbe qui
+   * demarre lentement le fait au moment precis ou l'oeil regarde.
+   *
+   * Les durees s'ecrivent en valeurs nues (`duration-140`), toutes sous les
+   * 300 ms de MASTER : 140 ms pour le retour de clic, 150 ms pour un survol,
+   * 200 ms pour l'entree d'un ecran vu une fois par jour.
+   * ================================================================== */
+
+  --ease-*: initial;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-
-  /* Il n'existe pas d'`ease-in` dans ce produit, et ce n'est pas un oubli :
-   * une courbe qui demarre lentement le fait au moment precis ou l'oeil
-   * regarde. Toute entree ou sortie prend `ease-out`. */
 }
 
 /*
- * Deux familles de valeurs relevees n'ont PAS de namespace de theme dans
- * Tailwind v4 : les epaisseurs de trait et les durees. Les inscrire dans
- * `@theme` produirait des variables mortes. Elles sont donc documentees ici et
- * s'ecrivent avec les utilitaires natifs.
+ * ====================================================================
+ * Les chiffres — le coeur du design (MASTER § 4)
  *
- * EPAISSEURS DE TRAIT. 1 px partout, et c'est la regle — 15977, 15978, 16000,
- * 16021. Les exceptions portent toutes un sens :
- *   `border`            1 px    le defaut, partout
- *   `border-[1.5px]`    1,5 px  pointille d'etat vide 16056, option 16112
- *   `border-2`          2 px    zone de depot 16212, tuile choisie 16268
- *   `border-t-3`        3 px    arete coloree en tete de tuile 16161, 16277
- *   `border-t-[3.5px]`  3,5 px  16303
+ * « Un tableau de budget doit se lire comme un registre, pas comme un tableau
+ * web. Sans tabulaire, les colonnes dansent d'une ligne a l'autre. »
  *
- * DUREES. Toutes deja sous 300 ms dans la source :
- *   `duration-140`  retour de clic — la fourchette utile est 100-160 ms
- *   `duration-150`  le cas dominant : 15984, 16016, 16086 (`.15s`)
- *   `duration-180`  glissement de la barre laterale : 15977, 16006 (`.18s`)
- *   `duration-200`  entree d'un ecran vu une fois par jour
+ * Deux utilitaires et non un, parce que la regle a deux moities :
  *
- * Rien au-dela de 300 ms.
- */
+ *   `chiffres`         Fira Code + chasse tabulaire. Pour tout nombre, y
+ *                      compris au fil du texte, ou l'aligner a droite n'aurait
+ *                      aucun sens.
+ *   `colonne-chiffres` la meme chose, alignee a droite. Pour une COLONNE de
+ *                      nombres — c'est la que « alignes a droite » se joue, et
+ *                      c'est ce que la liste de rejet verifie.
+ *
+ * `font-variant-numeric` ET `font-feature-settings` : la premiere propriete est
+ * la bonne, la seconde couvre les moteurs qui ne la mappent pas sur `tnum`.
+ * ==================================================================== */
+
+@utility chiffres {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+@utility colonne-chiffres {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  text-align: right;
+}

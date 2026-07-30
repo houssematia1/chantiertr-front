@@ -28,11 +28,11 @@ Les trois sources de vérité de ce lot, dans cet ordre :
 Elle est dans `design-system/MASTER.md` et nulle part ailleurs. En résumé :
 
 - **Style Data-Dense Dashboard** — barre latérale 240 px, en-tête 56 px, ligne de tableau 36 px, padding 12 px, corps 12-14 px
-- **Palette Construction / Architecture** — gris industriel `#64748B`, **orange de sécurité `#EA580C`** pour l'action seule, fond `#F8FAFC`, filets `#E2E8F0`
+- **Palette du prototype** — marine `#13233B`, vert de marque `#1FA37A`, vert porteur de texte `#157C5C`, fond `#F4F7FA`, filets `#E3E8EF`
 - **Fira Code et Fira Sans** — et **tous les chiffres en tabulaire aligné à droite**
 - **Rayons 4 à 6 px**, filets plutôt qu'ombres, aucun dégradé, aucun émoji
 
-L'accent a déjà été ajusté de `#F97316` à `#EA580C` pour tenir WCAG 3:1. Ne pas le remettre à sa valeur d'origine.
+Trois couleurs de la charte échouent en usage texte : aucun texte blanc sur le vert `#1FA37A` (3,19:1) — il se pose sur `#157C5C`. L'ambre ne s'écrit jamais, il remplit.
 
 ---
 

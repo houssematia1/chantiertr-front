@@ -7,18 +7,20 @@ import { Outlet } from 'react-router'
  * La STRUCTURE vient de `orvea-io/wastern-vue`, `src/layouts/AuthLayout.vue` :
  * un unique conteneur qui centre son enfant, et rien d'autre. Leur fichier fait
  * quatre lignes — un `div.auth-wrapper` autour d'un `<slot>`. Le patron est
- * juste et il est repris tel quel ; le style, lui, ne vient pas de chez eux.
+ * juste et il est repris tel quel ; le style, lui, vient de MASTER.
  *
- * Le style vient du legacy, ligne 15999 :
- *   `.login-screen { min-height:100vh; display:grid; place-items:center;
- *                    background:var(--bg); padding:24px }`
+ * `place-items-center` et non `place-content-start` : c'est le SEUL endroit du
+ * produit ou MASTER § 6 tolere du blanc — un ecran sans session n'a rien a
+ * afficher d'autre, et centrer un pave de 360 px n'est pas « un vide au centre
+ * de l'ecran », c'est la seule mise en page possible. Derriere la garde, la
+ * densite reprend.
  *
- * Le rembourrage de 24 px n'est pas decoratif : c'est la seule marge qui
- * empeche le pave de toucher les bords sur un petit ecran.
+ * Le rembourrage de 16 px est la marge qui empeche le pave de toucher les bords
+ * sur un telephone.
  */
 export function AuthLayout() {
   return (
-    <div className="bg-bg grid min-h-screen place-items-center p-24">
+    <div className="bg-background grid min-h-screen place-items-center p-4">
       <Outlet />
     </div>
   )

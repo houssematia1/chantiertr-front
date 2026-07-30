@@ -4,19 +4,32 @@ import type { ComponentPropsWithRef, ReactNode } from 'react'
 /**
  * Champ de saisie avec son libelle.
  *
- * Geometrie relevee dans le legacy, lignes 16073 a 16078 : libelle de 12,5 px
- * en 600 au-dessus, champ a 11 px sur 13 px, coins a 10 px, 16 px sous le
- * bloc. Trois valeurs impaires sur quatre — c'est la densite du produit, et
- * l'arrondir a une grille de 4 px la ferait disparaitre.
+ * QUATRE EXIGENCES DE MASTER § 7 sont tenues ici, et nulle part ailleurs — ce
+ * qui est la raison d'etre du composant :
  *
- * L'anneau de focus est celui de la source (16077) : la bordure passe au vert
- * et un halo de 3 px l'entoure. Rien n'est anime au-dela de ces deux
- * proprietes, nommees.
+ *  1. « Libelle visible sur chaque champ — jamais un placeholder seul. » Le
+ *     libelle n'est donc PAS optionnel dans le type : un champ sans libelle ne
+ *     compile pas.
+ *  2. « Erreur affichee SOUS le champ concerne. » Elle porte le message de l'API
+ *     ou du schema, mot pour mot.
+ *  3. « Zone `aria-live` sur les erreurs de formulaire. » Le conteneur de
+ *     l'erreur existe TOUJOURS dans le document, meme vide : une region vivante
+ *     inseree en meme temps que son contenu n'est pas annoncee.
+ *  4. « Anneau de focus visible. Ne jamais le retirer. » Il vient de la regle
+ *     globale `:focus-visible` d'`index.css`. Ce composant ajoute un changement
+ *     de bordure ; il ne touche pas a `outline`.
  *
- * PAS de bibliotheque de composants ici. Un champ de texte n'est pas un
- * composant difficile : ni piege de focus, ni positionnement flottant, ni
- * navigation au clavier a reinventer. La competence `pick-ui-library` reserve
- * `base-ui` aux dialogues, menus et listes de selection — ce sera le lot 3.
+ * MASTER § 4 range les formulaires dans le texte courant : le libelle est en
+ * Fira Sans 500, pas en Fira Code. Fira Code est reservee aux titres, aux
+ * libelles de COLONNES et aux chiffres.
+ *
+ * La hauteur est de 44 px — la cible tactile minimale de MASTER § 7. Rayon
+ * 4 px, un filet, aucune ombre.
+ *
+ * PAS de bibliotheque de composants ici. La competence `pick-ui-library` reserve
+ * `base-ui` a ce qui est reellement difficile — dialogues, menus, listes de
+ * selection : piege de focus, positionnement flottant, navigation au clavier a
+ * reinventer. Un champ de texte n'a rien de tout cela.
  */
 // `ComponentPropsWithRef` et non `InputHTMLAttributes` : `react-hook-form`
 // transmet une `ref` par `register()`, et React 19 la passe comme une prop
@@ -25,9 +38,15 @@ export interface ChampProps extends Omit<ComponentPropsWithRef<'input'>, 'id'> {
   libelle: string
   /** Message de l'API ou du schema. Affiche tel quel, jamais reecrit. */
   erreur?: string | undefined
-  /** Precision sous le champ, 16078. */
+  /** Precision sous le champ, quand le libelle ne suffit pas. */
   indication?: ReactNode
   obligatoire?: boolean
+  /**
+   * Les chiffres passent en chasse tabulaire — MASTER § 4. Un numero de
+   * telephone, une reference, un montant se saisissent en Fira Code : les
+   * groupes de trois chiffres restent alignes pendant la frappe.
+   */
+  numerique?: boolean
 }
 
 export function Champ({
@@ -35,6 +54,7 @@ export function Champ({
   erreur,
   indication,
   obligatoire = false,
+  numerique = false,
   className = '',
   ...reste
 }: ChampProps) {
@@ -47,29 +67,33 @@ export function Champ({
     .join(' ')
 
   return (
-    // 16073 : `.field { margin-bottom: 16px }`
-    <div className="mb-16">
-      {/* 16074 */}
-      <label htmlFor={id} className="text-navy-soft mb-6 block text-12.5 font-semibold">
+    <div className="mb-3">
+      <label htmlFor={id} className="text-foreground mb-1 block text-13 font-medium">
         {libelle}
-        {/* 16075 : l'asterisque de champ obligatoire est en rouge. */}
-        {obligatoire && <span className="text-danger"> *</span>}
+        {/* MASTER § 7 : la couleur ne porte jamais seule une information —
+            l'asterisque est un GLYPHE, et le champ est aussi marque `required`
+            pour les technologies d'assistance. */}
+        {obligatoire && (
+          <span className="text-destructive" aria-hidden="true">
+            {' *'}
+          </span>
+        )}
       </label>
 
       <input
         id={id}
+        required={obligatoire}
         aria-invalid={erreur === undefined ? undefined : true}
         aria-describedby={decrit === '' ? undefined : decrit}
         className={[
-          // 16076
-          'text-navy w-full rounded-10 border bg-white px-13 py-11',
-          // 16077 : bordure verte et halo de 3 px au focus. Le contour natif est
-          // remplace, pas supprime — l'anneau vert est parfaitement visible au
-          // clavier.
-          'focus:border-green focus:shadow-[0_0_0_3px_var(--color-green-l)] focus:outline-none',
-          'transition-[border-color,box-shadow] duration-150 ease-out',
-          // Un champ en erreur porte la couleur de l'erreur sur sa bordure.
-          erreur === undefined ? 'border-line' : 'border-danger',
+          'text-foreground bg-card h-11 w-full rounded-4 border px-3 text-14',
+          'placeholder:text-muted-foreground',
+          // La bordure se renforce au focus. L'anneau, lui, vient de la regle
+          // globale : ce composant n'ecrit JAMAIS `outline-none`.
+          'focus:border-primary',
+          'transition-[border-color] duration-150 ease-out',
+          erreur === undefined ? 'border-border' : 'border-destructive',
+          numerique ? 'chiffres' : '',
           className,
         ]
           .filter(Boolean)
@@ -77,15 +101,19 @@ export function Champ({
         {...reste}
       />
 
-      {erreur !== undefined && (
-        <p id={idErreur} className="text-danger mt-5 text-11">
-          {erreur}
-        </p>
-      )}
+      {/* La region vivante est presente meme sans erreur : c'est ce qui fait
+          qu'un message insere plus tard est ANNONCE. Vide, un bloc sans contenu
+          ne prend aucune hauteur. */}
+      <div aria-live="polite">
+        {erreur !== undefined && (
+          <p id={idErreur} className="text-destructive mt-1 text-12">
+            {erreur}
+          </p>
+        )}
+      </div>
 
-      {/* 16078 : `.field .hint` */}
       {indication != null && erreur === undefined && (
-        <p id={idIndication} className="text-slate mt-5 text-11">
+        <p id={idIndication} className="text-muted-foreground mt-1 text-12">
           {indication}
         </p>
       )}

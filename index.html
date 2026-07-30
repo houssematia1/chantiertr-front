@@ -6,12 +6,17 @@
     <meta name="color-scheme" content="light" />
     <!--
       Le fond est pose ici et non attendu du CSS : sans lui, le premier cadre
-      est blanc puis bascule sur `#F4F7FA`. Un clignotement de 20 ms qu'on ne
-      remarque pas mais qu'on sent.
+      est blanc puis bascule sur la surface de travail. Un clignotement de 20 ms
+      qu'on ne remarque pas mais qu'on sent.
+
+      C'est le SEUL hexadecimal en dur du produit, et il ne peut pas etre un
+      jeton : il doit etre lisible par le navigateur avant que la moindre
+      feuille de style ne soit analysee. La valeur est celle de
+      `--color-background`, MASTER § 3.
     -->
     <style>
       html {
-        background: #f4f7fa;
+        background: #f8fafc;
       }
     </style>
     <title>Chantier Tranquille</title>

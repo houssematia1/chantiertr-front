@@ -32,29 +32,45 @@ Corps de texte **12 à 14 px**. Padding **8 à 12 px**. En-têtes de tableau col
 
 ---
 
-## 3. Palette — Construction / Architecture
+## 3. Palette — la charte du prototype
 
-Gris industriel et orange de sécurité. L'accent a été ajusté de `#F97316` à `#EA580C` pour tenir le ratio WCAG 3:1 — ne le remettez pas à sa valeur d'origine.
+**La charte graphique du prototype est l'identité de la marque et elle est conservée.** Marine et vert. C'est le *style* du logiciel d'origine qui était daté, pas ses couleurs.
 
-| Rôle | Valeur | Usage |
+Mais trois de ses couleurs ne tiennent pas les seuils d'accessibilité en usage texte. Les ratios ont été mesurés, pas estimés :
+
+| Paire | Ratio | Verdict |
 |---|---|---|
-| `--primary` | `#64748B` | Chrome, barre latérale, éléments structurants |
-| `--on-primary` | `#FFFFFF` | |
-| `--secondary` | `#94A3B8` | Éléments secondaires |
-| `--accent` | `#EA580C` | **L'action, et elle seule.** Orange de sécurité. |
-| `--on-accent` | `#FFFFFF` | |
-| `--background` | `#F8FAFC` | Surface de travail |
-| `--card` | `#FFFFFF` | Cartes, tableaux |
-| `--foreground` | `#334155` | Texte courant |
-| `--muted` | `#EBF0F5` | Fonds atténués, en-têtes de tableau |
-| `--muted-foreground` | `#64748B` | Texte secondaire, libellés |
-| `--border` | `#E2E8F0` | Filets, séparateurs |
-| `--destructive` | `#DC2626` | Suppression, dépassement |
-| `--ring` | `#64748B` | Anneau de focus |
+| Blanc sur vert `#1FA37A` | **3,19:1** | ⚠ gros texte et éléments d'interface seulement |
+| Rouge `#D9534F` sur blanc | **3,96:1** | ⚠ échoue en texte courant |
+| Ambre `#E8A33D` sur blanc | **2,16:1** | ✗ inutilisable en texte |
 
-**Discipline de couleur.** L'orange est réservé à l'action. Le rouge et le vert gardent leur sens métier — validé, dépassé — et ne servent jamais à décorer. Trois couleurs qui ne se disputent pas l'attention.
+La réponse n'est pas de changer les teintes, c'est de **donner à chacune deux valeurs : une pour remplir, une pour écrire.** C'est ce qu'un designer fait dans ce cas.
 
-Jetons sémantiques obligatoires. **Aucun hexadécimal en dur dans un composant.**
+### Les jetons
+
+| Jeton | Valeur | Rôle | Ratio |
+|---|---|---|---|
+| `--navy` | `#13233B` | Chrome, barre latérale, texte principal | 14,67:1 |
+| `--navy-soft` | `#2B3E59` | Chrome secondaire | |
+| `--slate` | `#5A6B82` | Texte secondaire, libellés | 5,06:1 |
+| `--green` | `#1FA37A` | **Le vert de la marque.** Logo, indicateurs actifs, aplats, badges à texte foncé | identitaire |
+| `--green-strong` | `#157C5C` | **Tout ce qui porte du texte blanc** : boutons, bandeaux. Et le vert en texte sur fond clair | 5,16:1 · 4,80:1 |
+| `--green-wash` | `#E7F5F0` | Fond validé, avec texte `--green-strong` dessus | |
+| `--bg` | `#F4F7FA` | Surface de travail | |
+| `--card` | `#FFFFFF` | Cartes, tableaux | |
+| `--line` | `#E3E8EF` | Filets, séparateurs | |
+| `--danger` | `#C0332F` | Suppression, dépassement — texte **et** remplissage | 5,59:1 |
+| `--warn-fill` | `#E8A33D` | **Remplissage uniquement**, texte marine dessus | 7,31:1 |
+| `--ring` | `#13233B` | Anneau de focus | |
+
+### Discipline
+
+- **Aucun texte blanc sur `--green`.** Il se pose sur `--green-strong`.
+- **L'ambre ne s'écrit jamais.** Il remplit, et le texte qui le surmonte est marine.
+- Le vert et le rouge gardent leur sens métier — validé, dépassé — et ne servent jamais à décorer.
+- Jetons sémantiques obligatoires. **Aucun hexadécimal en dur dans un composant.**
+
+Le style « Data-Dense Dashboard » retenu en section 2 vient du référentiel `ui-ux-pro-max` ; sa palette proposée — gris industriel et orange de sécurité — est écartée au profit de la charte du produit. Seules la densité, la structure et les règles y sont reprises.
 
 ---
 
