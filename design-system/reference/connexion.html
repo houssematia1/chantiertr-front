@@ -1,4 +1,16 @@
 <!doctype html>
+<!--
+  MAQUETTE DE REFERENCE — l'ecran de connexion valide par le client, 30/07.
+
+  Elle FAIT FOI sur la composition. La transposition React vit dans
+  `src/layouts/AuthLayout.tsx` et les composants de `src/components/ui/` ; les
+  deux ecarts assumes sont documentes dans MASTER § 10, « Deux mesures que la
+  transposition a corrigees » et « Adaptation au telephone ».
+
+  Chemins RELATIFS : ce fichier s'ouvre seul dans un navigateur, sans serveur.
+  Il ne vit PAS dans `public/` — tout ce qui y est place part en production, et
+  une maquette n'a rien a y faire.
+-->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -31,7 +43,7 @@ body{font-family:'Barlow',system-ui,sans-serif;color:var(--blue);background:#fff
 .id::before{
   content:"";position:absolute;right:-8%;bottom:-6%;
   width:54%;aspect-ratio:907/604;
-  background:url("/benne.png") no-repeat center/contain;
+  background:url("benne.png") no-repeat center/contain;
   pointer-events:none;
 }
 /* Bande d'avertissement en pied. */
@@ -120,28 +132,63 @@ label{
   .auth{padding:42px 40px 38px}
   .id::before{width:66%;right:-14%}
 }
+
+/*
+ * VOLET FORMULAIRE — variante « Bande », validee par le client.
+ *
+ * La bande d'avertissement du volet gauche est reprise EN TETE a droite : les
+ * deux bandes se repondent en diagonale et referment la composition. C'est le
+ * seul ornement du volet, et il n'est pas decoratif — il est le rappel du seul
+ * motif de la marque.
+ *
+ * Aucun titre, aucune phrase d'accompagnement : le volet ne porte que les
+ * champs. Les champs sont centres verticalement.
+ */
+.auth{position:relative;border-left:0}
+.auth::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:9px;
+  background:repeating-linear-gradient(135deg,var(--amber) 0 19px,var(--blue) 19px 38px);
+}
+.fd{margin-bottom:22px}
+.in{height:56px;font-size:16px}
+.eye{height:56px}
+.bt{height:58px;margin-top:14px}
+.sep{margin-top:28px;border-top:1px solid var(--line)}
+
 </style>
 </head>
 <body>
 
+
+
+
 <div class="page">
 
   <section class="id">
-    <img class="logo" src="/logo-blanc.png" alt="Chantier Tranquille">
+    <img class="logo" src="logo-blanc.png" alt="Chantier Tranquille">
 
     <div class="core">
       <h2>Dépenses communes, <em>compte tenu</em></h2>
       <p>Base vie, fluides, bennes, gardiennage. Ce que dix entreprises partagent sur un chantier, chiffré avant le premier coup de pelle.</p>
       <div class="figs">
+        <!-- Les trois chiffres sont RELEVES dans le catalogue du logiciel
+             d'origine, pas choisis pour la composition :
+               19  `PRESTATIONS`  — P1 a P19
+                8  `TYPE_OFFRE`   — logiciel, prorata classique, prorata
+                                    ameliore, lot 00, lot dechets, grand
+                                    projet, avenant, ponctuel
+                6  `CAT_ORDER`    — maitre d'ouvrage, AMO, societe de
+                                    facturation, entreprise de BTP,
+                                    entreprise de services, fournisseur -->
         <div><b class="num">19</b><span>Prestations</span></div>
-        <div><b class="num">3</b><span>Offres</span></div>
-        <div><b class="num">24</b><span>Mois suivis</span></div>
+        <div><b class="num">8</b><span>Types d'offre</span></div>
+        <div><b class="num">6</b><span>Catégories</span></div>
       </div>
     </div>
   </section>
 
   <section class="auth">
-    <form class="form" novalidate>
+    <form class="form" novalidate><div class="box">
       <div class="fd">
         <label for="e">Adresse e-mail</label>
         <div class="wrap">
@@ -164,7 +211,9 @@ label{
       </div>
 
       <button class="bt" type="submit">Se connecter</button>
+      <div class="sep"></div>
       <a class="lk" href="#">Mot de passe oublié&nbsp;?</a>
+      </div>
     </form>
 
     <div class="auth-foot">API <code>localhost:8010</code></div>

@@ -7,7 +7,7 @@ import { Alerte } from '@/components/ui/Alerte'
 import { Bouton } from '@/components/ui/Bouton'
 import { Champ } from '@/components/ui/Champ'
 import { Lien } from '@/components/ui/Lien'
-import { PaveAuth } from '@/components/ui/PaveAuth'
+import { EnteteAuth } from '@/components/ui/EnteteAuth'
 import { erreurDeChamp, messageDErreur } from '@/lib/erreurs'
 
 /**
@@ -52,7 +52,9 @@ export function MotDePasseOublie() {
 
   if (demande.data != null) {
     return (
-      <PaveAuth titre="Lien envoyé" sousTitre="Consultez votre boîte de réception.">
+      <>
+        <EnteteAuth titre="Lien envoyé" sousTitre="Consultez votre boîte de réception." />
+
         {/* Le message vient de l'API, mot pour mot : « Si un compte existe pour
             cette adresse, un lien vient d'être envoyé. » Sa formulation
             conditionnelle EST la protection — la reecrire au present la
@@ -67,15 +69,17 @@ export function MotDePasseOublie() {
         <p className="text-13">
           <Lien to="/connexion">Retour à la connexion</Lien>
         </p>
-      </PaveAuth>
+      </>
     )
   }
 
   return (
-    <PaveAuth
-      titre="Mot de passe oublié"
-      sousTitre="Nous vous envoyons un lien pour en choisir un nouveau."
-    >
+    <>
+      <EnteteAuth
+        titre="Mot de passe oublié"
+        sousTitre="Nous vous envoyons un lien pour en choisir un nouveau."
+      />
+
       <form
         onSubmit={(evenement) => {
           void soumettre(evenement)
@@ -83,7 +87,8 @@ export function MotDePasseOublie() {
         noValidate
       >
         <Champ
-          libelle="E-mail"
+          taille="auth"
+          libelle="Adresse e-mail"
           type="email"
           placeholder="nom@domaine.fr"
           autoComplete="username"
@@ -103,6 +108,7 @@ export function MotDePasseOublie() {
 
         <Bouton
           type="submit"
+          taille="auth"
           pleineLargeur
           disabled={demande.isPending}
           aria-busy={demande.isPending}
@@ -114,6 +120,6 @@ export function MotDePasseOublie() {
       <p className="mt-4 text-13">
         <Lien to="/connexion">Retour à la connexion</Lien>
       </p>
-    </PaveAuth>
+    </>
   )
 }

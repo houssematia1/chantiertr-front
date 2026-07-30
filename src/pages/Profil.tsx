@@ -36,10 +36,12 @@ export function Profil() {
     <div className="min-h-screen">
       {/* MASTER § 2 : `--header-height` vaut 56 px, soit `h-14`. */}
       <header className="border-line bg-card flex h-14 items-center justify-between border-b px-3">
-        <Marque echelle="barre" />
+        {/* 116 px dans un en-tete de 56 px : le logo garde son rapport 3,52:1,
+            donc 33 px de haut, et il reste de l'air au-dessus et en dessous. */}
+        <Marque largeur={116} />
 
         <div className="flex items-center gap-2">
-          {/* Les initiales sont en Fira Code : deux capitales dans un carre de
+          {/* Les initiales sont en chasse fixe : deux capitales dans un carre de
               28 px restent centrees quelles qu'elles soient, ce qu'une chasse
               proportionnelle ne garantit pas. */}
           <span
@@ -105,7 +107,7 @@ export function Profil() {
  * survolee cent fois par jour, et la liste de rejet du plan nomme
  * explicitement « une animation sur un tableau ». Le fond change sec.
  *
- * `numerique` fait passer la valeur en Fira Code tabulaire. Les valeurs
+ * `numerique` fait passer la valeur en Barlow tabulaire. Les valeurs
  * textuelles sont deja alignees a droite par la mise en page ; ce que la classe
  * ajoute, c'est la chasse fixe des chiffres, sans laquelle un `1` et un `8` ne
  * font pas la meme largeur et la colonne danse d'une ligne a l'autre.
@@ -123,7 +125,7 @@ function Ligne({
 }) {
   return (
     <div className="border-line hover:bg-bg grid min-h-9 grid-cols-[minmax(110px,200px)_1fr] items-center gap-3 border-b px-3 last:border-b-0">
-      {/* Libelle de colonne : Fira Code, capitales, interlettrage ouvert —
+      {/* Libelle de colonne : Barlow Condensed, capitales, interlettrage ouvert —
           MASTER § 4. `--slate` sur `--card` vaut 5,44:1. */}
       <dt className="text-slate font-mono tracking-colonne text-12 uppercase">{cle}</dt>
       <dd

@@ -26,7 +26,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
  */
 
 type Variante = 'action' | 'neutre' | 'destructif'
-type Taille = 'md' | 'sm'
+type Taille = 'auth' | 'md' | 'sm'
 
 const VARIANTES: Record<Variante, string> = {
   // L'action principale. Une par ecran.
@@ -37,11 +37,15 @@ const VARIANTES: Record<Variante, string> = {
 }
 
 /**
- * Deux hauteurs, et leur ecart n'est pas cosmetique.
+ * Trois hauteurs, et leurs ecarts ne sont pas cosmetiques.
+ *
+ * `auth` fait 58 px, et son libelle est en Barlow Condensed 700 capitales : c'est
+ * la geometrie de la maquette de connexion validee par le client. Elle ne vaut
+ * QUE pour l'action unique d'un ecran sans session — « Se connecter », « Definir
+ * le mot de passe ». Sur la surface de travail elle serait hors d'echelle.
  *
  * `md` fait 44 px : c'est la cible tactile minimale de MASTER § 7, et c'est la
- * taille des boutons de formulaire — y compris sur les ecrans sans session,
- * ouverts depuis un telephone dans un bureau de chantier.
+ * taille des boutons de formulaire de la surface de travail.
  *
  * `sm` fait 36 px, soit exactement `--table-row-height` : c'est la taille des
  * boutons qui vivent DANS une barre d'actions ou une ligne de tableau, ou une
@@ -49,8 +53,9 @@ const VARIANTES: Record<Variante, string> = {
  * au-dela du minimum de 24 px de WCAG 2.5.8.
  */
 const TAILLES: Record<Taille, string> = {
-  md: 'h-11 px-4 text-14 rounded-4',
-  sm: 'h-9 px-3 text-13 rounded-4',
+  auth: 'h-[58px] px-5 rounded-6 font-display font-bold text-[17.5px] uppercase tracking-[0.11em]',
+  md: 'h-11 px-4 text-14 rounded-4 font-medium',
+  sm: 'h-9 px-3 text-13 rounded-4 font-medium',
 }
 
 export interface BoutonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -75,7 +80,13 @@ export function Bouton({
       type={type}
       className={[
         // Un bouton est une ligne : il ne se coupe jamais.
-        'inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap',
+        //
+        // LA GRAISSE N'EST PAS ICI mais dans chaque taille. Tailwind ne resout
+        // pas les conflits d'utilitaires par l'ordre de la CHAINE de classes,
+        // mais par l'ordre du CSS genere : un `font-medium` de base et un
+        // `font-bold` de taille se disputeraient la propriete, et le gagnant
+        // dependrait de l'ordre interne de Tailwind, pas du notre.
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap',
         // Retour de clic. Trois proprietes nommees, jamais `all`.
         'transition-[background-color,border-color,transform] duration-140 ease-out',
         'active:scale-[0.97]',

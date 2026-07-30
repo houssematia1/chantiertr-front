@@ -6,11 +6,19 @@
  * regle ne les reclame, et `@theme` doit venir apres `@import 'tailwindcss'`
  * pour remplacer les namespaces par defaut plutot que d'etre remplace par eux.
  *
- * LES SIX SEULES FONTES CHARGEES. `@fontsource` publie 32 variantes par
- * famille — italiques, cyrillique, grec, vietnamien, neuf graisses. Importer
- * `fira-sans/index.css` les prendrait toutes. Ici, sous-ensemble latin
- * uniquement, aucune italique, et les trois graisses que MASTER § 4 nomme :
- * 400 et 500 pour le texte courant, 600 pour l'emphase et les titres.
+ * LES CINQ SEULES FONTES CHARGEES. `@fontsource` publie une trentaine de
+ * variantes par famille — italiques, cyrillique, grec, vietnamien, neuf
+ * graisses. Importer `barlow/index.css` les prendrait toutes. Ici, sous-ensemble
+ * latin uniquement, aucune italique, et les seules graisses employees :
+ * Barlow 400 et 500 pour le texte courant, 600 pour l'emphase et les liens ;
+ * Barlow Condensed 600 pour les libelles en capitales, 700 pour l'affiche et
+ * les boutons.
+ *
+ * POURQUOI BARLOW ET NON FIRA. C'est l'ecran de connexion valide par le client
+ * qui a tranche : il est compose en Barlow et Barlow Condensed, et une
+ * validation vaut decision. Fira Code et Fira Sans, que MASTER § 4 portait,
+ * sont retirees — deux systemes typographiques dans un meme produit sont un
+ * defaut, pas une richesse.
  *
  * Chaque fichier de `@fontsource` porte deja `font-display: swap` : le texte
  * s'affiche immediatement dans la pile de repli et bascule des que la fonte
@@ -19,15 +27,14 @@
  * critique, pour gagner un `swap` de quelques dizaines de millisecondes.
  */
 
-/* Texte courant, formulaires — MASTER § 4 */
-@import '@fontsource/fira-sans/latin-400.css';
-@import '@fontsource/fira-sans/latin-500.css';
-@import '@fontsource/fira-sans/latin-600.css';
+/* Texte courant, formulaires, ET TOUS LES CHIFFRES — MASTER § 4 */
+@import '@fontsource/barlow/latin-400.css';
+@import '@fontsource/barlow/latin-500.css';
+@import '@fontsource/barlow/latin-600.css';
 
-/* Titres, libelles de colonnes, et TOUS les chiffres — MASTER § 4 */
-@import '@fontsource/fira-code/latin-400.css';
-@import '@fontsource/fira-code/latin-500.css';
-@import '@fontsource/fira-code/latin-600.css';
+/* Titres, libelles en capitales, chiffres d'affiche — MASTER § 4 */
+@import '@fontsource/barlow-condensed/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-700.css';
 
 @import 'tailwindcss';
 @import './tokens.css';
@@ -57,14 +64,20 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* MASTER § 4 : les titres sont en Fira Code. C'est ce qui donne au produit son
-   * air d'outil technique plutot que de page web — et c'est pour cela que la
-   * graisse plafonne a 600 : au-dela, une fonte a chasse fixe devient un bloc. */
+  /* Les titres sont en Barlow Condensed. Sa chasse etroite laisse un titre
+   * tenir sur une ligne a taille utile, ce qui sert la densite de MASTER § 2 —
+   * et c'est le caractere de l'ecran de connexion valide.
+   *
+   * ATTENTION : Barlow Condensed n'a PAS de chiffres tabulaires. Mesure au
+   * navigateur, `111111` et `999999` gardent 7,32 px d'ecart a 40 px, avec
+   * `font-variant-numeric: tabular-nums` applique. Un titre peut donc porter un
+   * chiffre, mais JAMAIS une colonne — voir les utilitaires `chiffres` et
+   * `colonne-chiffres` en bas de `tokens.css`. */
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-mono);
+    font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: var(--tracking-titre);
     line-height: var(--leading-titre);
@@ -88,8 +101,13 @@
    * figure nulle part dans `src/`, et un composant qui veut un anneau different
    * change sa COULEUR, pas son existence.
    *
-   * `--color-ring` (marine) vaut 15,77:1 sur `card` et 14,67:1 sur `bg`, tres
+   * `--color-ring` (marine) vaut 12,48:1 sur `card` et 11,61:1 sur `bg`, tres
    * au-dela du seuil de 3:1 des elements non textuels.
+   *
+   * L'`outline-offset` de 2 px n'est pas cosmetique : le marine ne vaut que
+   * 2,42:1 contre le vert `--green-strong`. Sur un bouton vert, l'anneau doit
+   * donc se poser dans le blanc qui l'entoure, pas au ras du vert. Le retirer
+   * ferait tomber l'anneau sous le seuil de 3:1 de WCAG 1.4.11.
    */
   :focus-visible {
     outline: 2px solid var(--color-ring);

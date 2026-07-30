@@ -8,7 +8,7 @@ import { Alerte } from '@/components/ui/Alerte'
 import { Bouton } from '@/components/ui/Bouton'
 import { Champ } from '@/components/ui/Champ'
 import { Lien } from '@/components/ui/Lien'
-import { PaveAuth } from '@/components/ui/PaveAuth'
+import { EnteteAuth } from '@/components/ui/EnteteAuth'
 import { erreurDeChamp, messageDErreur } from '@/lib/erreurs'
 
 /**
@@ -95,7 +95,9 @@ export function ChoisirMotDePasse({ motif }: ChoisirMotDePasseProps) {
 
   if (choix.data != null) {
     return (
-      <PaveAuth titre="C'est fait" sousTitre="Votre mot de passe est enregistré.">
+      <>
+        <EnteteAuth titre="C'est fait" sousTitre="Votre mot de passe est enregistré." />
+
         {/* Message de l'API, mot pour mot : « Mot de passe enregistré. Vous
             pouvez vous connecter. » */}
         <Alerte ton="succes">{choix.data.message}</Alerte>
@@ -106,7 +108,7 @@ export function ChoisirMotDePasse({ motif }: ChoisirMotDePasseProps) {
         <p className="text-13">
           <Lien to="/connexion">Se connecter</Lien>
         </p>
-      </PaveAuth>
+      </>
     )
   }
 
@@ -117,7 +119,9 @@ export function ChoisirMotDePasse({ motif }: ChoisirMotDePasseProps) {
   const refusDuLien = erreurDeChamp(choix.error ?? null, 'token')
 
   return (
-    <PaveAuth titre={textes.titre} sousTitre={textes.sousTitre}>
+    <>
+      <EnteteAuth titre={textes.titre} sousTitre={textes.sousTitre} />
+
       {refusDuLien !== undefined && (
         <>
           <Alerte ton="erreur">{refusDuLien}</Alerte>
@@ -134,9 +138,11 @@ export function ChoisirMotDePasse({ motif }: ChoisirMotDePasseProps) {
         noValidate
       >
         <Champ
+          taille="auth"
           libelle="Mot de passe"
           type="password"
           autoComplete="new-password"
+          revelable
           autoFocus
           obligatoire
           indication="12 caractères minimum."
@@ -145,9 +151,11 @@ export function ChoisirMotDePasse({ motif }: ChoisirMotDePasseProps) {
         />
 
         <Champ
+          taille="auth"
           libelle="Confirmation du mot de passe"
           type="password"
           autoComplete="new-password"
+          revelable
           obligatoire
           erreur={errors.password_confirmation?.message}
           {...register('password_confirmation')}
@@ -161,10 +169,16 @@ export function ChoisirMotDePasse({ motif }: ChoisirMotDePasseProps) {
             <Alerte ton="erreur">{messageDErreur(choix.error)}</Alerte>
           )}
 
-        <Bouton type="submit" pleineLargeur disabled={choix.isPending} aria-busy={choix.isPending}>
+        <Bouton
+          type="submit"
+          taille="auth"
+          pleineLargeur
+          disabled={choix.isPending}
+          aria-busy={choix.isPending}
+        >
           {choix.isPending ? 'Enregistrement…' : textes.action}
         </Bouton>
       </form>
-    </PaveAuth>
+    </>
   )
 }

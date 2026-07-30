@@ -47,11 +47,36 @@
   --color-current: currentcolor;
   --color-inherit: inherit;
 
-  /* --- Marine : le chrome et le texte -------------------------------- */
-  --color-navy: #13233b; /* 15,77:1 sur card · 14,67:1 sur bg */
-  --color-navy-soft: #2b3e59; /* 10,85:1 sur card — chrome secondaire */
+  /* --- Marine : le chrome et le texte --------------------------------
+   *
+   * `#0F3071` EST RELEVE DANS LE FICHIER DE LOGO OFFICIEL, a la pipette. Le
+   * `#13233B` que ce fichier portait venait de la feuille de style du
+   * prototype, qui l'avait assombri : c'etait une valeur de seconde main. Le
+   * logo fait foi sur la couleur de la marque.
+   *
+   * Consequence a connaitre : le marine est plus CLAIR qu'avant, donc tous les
+   * contrastes qu'il porte baissent. Ils sont recalcules ci-dessous, un par un,
+   * et aucun ne tombe sous son seuil. Le seul qui s'en approche est le marine
+   * sur l'ambre — 5,79:1 contre 7,31:1 avant. */
+  --color-navy: #0f3071; /* 12,49:1 sur card · 11,62:1 sur bg */
+  --color-navy-soft: #2a4a8c; /* 8,55:1 sur card · 7,95:1 sur bg — chrome secondaire */
   --color-slate: #5a6b82; /* 5,44:1 sur card · 5,06:1 sur bg — libelles */
-  --color-on-navy: #ffffff; /* 15,77:1 — texte sur un aplat marine */
+
+  /* CE QUI S'ECRIT SUR UN APLAT MARINE. Trois valeurs et non une, parce qu'un
+   * aplat de 1 030 px de large a besoin d'une hierarchie : le titre en blanc, la
+   * phrase un ton en dessous, les libelles de chiffres plus bas encore. Tous
+   * MESURES contre `--navy`, et tous au-dela de 4,5:1 — aucun n'est un gris
+   * decoratif pose a l'oeil. */
+  --color-on-navy: #ffffff; /* 12,49:1 sur navy — logo, titre d'affiche */
+  --color-on-navy-soft: #b3c4de; /* 7,06:1 sur navy — la phrase */
+  --color-on-navy-faint: #93a8c9; /* 5,16:1 sur navy — libelles en capitales */
+
+  /* Filet SUR l'aplat marine — 1,46:1, purement decoratif : il separe trois
+   * chiffres deja separes par leur espacement. Meme valeur que `--navy-soft`
+   * aujourd'hui, mais un role different : l'un est un premier plan sur surface
+   * claire, l'autre un filet sur surface sombre. Deux noms pour que l'un puisse
+   * bouger sans l'autre. */
+  --color-navy-line: #2a4a8c;
 
   /* --- Vert : la marque, et son sens metier -------------------------- */
 
@@ -82,7 +107,23 @@
   /* --- Surfaces et filets -------------------------------------------- */
   --color-bg: #f4f7fa; /* Surface de travail */
   --color-card: #ffffff; /* Cartes, tableaux, panneaux */
-  --color-line: #e3e8ef; /* Filets, separateurs */
+
+  /* DEUX FILETS, et la difference est une regle d'accessibilite, pas un gout.
+   *
+   * WCAG 1.4.11 exige 3:1 pour « l'information visuelle necessaire a
+   * IDENTIFIER un composant d'interface ». Un separateur de lignes n'identifie
+   * rien — le texte de la ligne s'en charge —, donc il reste clair. La bordure
+   * d'un champ de saisie, elle, est la seule chose qui dise ou cliquer : elle
+   * doit passer.
+   *
+   * `#E3E8EF` ne vaut que 1,23:1 sur blanc et `#D5DDE7`, la bordure de champ du
+   * prototype, 1,37:1. Les deux echouent en usage identifiant. `#7F8EA3` est la
+   * valeur la plus CLAIRE qui tienne 3:1 sur les DEUX surfaces du produit —
+   * 3,33:1 sur `card`, 3,10:1 sur `bg`. `#8493A8` passait sur blanc (3,12:1) et
+   * tombait sur le gris (2,91:1) : un champ dans une carte posee sur la surface
+   * de travail aurait ete conforme ou non selon l'ecran. Une seule valeur. */
+  --color-line: #e3e8ef; /* Filets, separateurs, bords de carte — DECORATIF */
+  --color-line-champ: #7f8ea3; /* Bordure de tout controle — 3,33:1 · 3,10:1 */
 
   /* --- Rouge et ambre : le sens metier, jamais la decoration --------- */
 
@@ -96,10 +137,15 @@
    * vaut que 2,16:1 sur blanc : il ne s'ecrit pas, et ne borde rien de
    * significatif. Le texte qui le surmonte est marine — 7,31:1. */
   --color-warn-fill: #e8a33d;
-  --color-on-warn-fill: var(--color-navy); /* 7,31:1 */
+  --color-on-warn-fill: var(--color-navy); /* 5,79:1 — etait 7,31:1 sous l'ancien marine */
 
-  /* --- Anneau de focus ---------------------------------------------- */
-  --color-ring: #13233b; /* 15,77:1 sur card · 14,67:1 sur bg */
+  /* --- Anneau de focus ----------------------------------------------
+   *
+   * Le marine vaut 12,49:1 sur `card` et 11,62:1 sur `bg`. Mais il ne vaut que
+   * 2,42:1 CONTRE LE VERT du bouton d'action : c'est l'`outline-offset` de 2 px
+   * d'`index.css` qui rend l'anneau conforme, en le posant dans le blanc au lieu
+   * du vert. Le retirer ferait tomber l'anneau sous 3:1. */
+  --color-ring: #0f3071; /* 12,49:1 sur card · 11,62:1 sur bg */
 
   /* ------------------------------------------------------------------
    * TROIS COUPLES INTERDITS, mesures ici pour qu'ils ne soient pas
@@ -111,28 +157,44 @@
    *                                            travail : 3 centiemes sous le
    *                                            seuil restent sous le seuil
    *   blanc sur `--warn-fill`      2,16:1  ->  le texte sur l'ambre est marine
+   *   `--navy` sur `--green-strong` 2,42:1 ->  l'anneau de focus d'un bouton vert
+   *                                            se pose dans le blanc, jamais au
+   *                                            ras du vert : `outline-offset`
+   *   `--line` en bordure de champ 1,23:1  ->  un controle prend
+   *                                            `--line-champ`, jamais `--line`
    * ------------------------------------------------------------------ */
 
   /* ==================================================================
-   * Typographie — Fira Code et Fira Sans (MASTER § 4)
+   * Typographie — Barlow et Barlow Condensed (MASTER § 4)
    *
-   * Inter est INTERDITE par MASTER § 6, avec Roboto et la police systeme :
-   * c'est le marqueur le plus reconnaissable d'une interface generee, et c'est
-   * ce que l'echafaudage portait. La pile ne retombe sur `system-ui` que
-   * pendant le `swap`, le temps du premier chargement — une pile CSS doit se
-   * terminer.
+   * C'EST L'ECRAN DE CONNEXION VALIDE PAR LE CLIENT QUI A TRANCHE. Il est
+   * compose en Barlow et Barlow Condensed, et une validation vaut decision.
+   * Fira Code et Fira Sans, que MASTER § 4 portait, sont retirees : deux
+   * systemes typographiques dans un meme produit sont un defaut.
+   *
+   * Inter reste INTERDITE, avec Roboto et la police systeme — MASTER § 6 : c'est
+   * le marqueur le plus reconnaissable d'une interface generee. La pile ne
+   * retombe sur `system-ui` que pendant le `swap`, le temps du premier
+   * chargement — une pile CSS doit se terminer.
    *
    * Les fontes sont AUTO-HEBERGEES (`@fontsource`, voir `index.css`) et non
-   * chargees depuis Google Fonts comme le suggere l'extrait de MASTER § 4.
-   * Trois raisons, dans cet ordre : un `@import` de feuille distante bloque
-   * l'analyse du CSS ; hotlinker Google Fonts transmet l'adresse IP du
-   * visiteur a un tiers, ce que la CNIL a juge illicite — et le produit est un
-   * SaaS francais ; un bureau de chantier derriere un proxy filtrant
-   * retomberait sur la police systeme, precisement l'interdit § 6.
+   * chargees depuis Google Fonts comme le fait la maquette de reference. Trois
+   * raisons, dans cet ordre : un `@import` de feuille distante bloque l'analyse
+   * du CSS ; hotlinker Google Fonts transmet l'adresse IP du visiteur a un
+   * tiers, ce que la CNIL a juge illicite — et le produit est un SaaS francais ;
+   * un bureau de chantier derriere un proxy filtrant retomberait sur la police
+   * systeme, precisement l'interdit § 6.
    * ================================================================== */
 
-  --font-sans: 'Fira Sans', system-ui, sans-serif;
-  --font-mono: 'Fira Code', ui-monospace, monospace;
+  --font-sans: 'Barlow', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+
+  /* Le monospace ne sert plus aux chiffres — voir les utilitaires en bas de
+   * fichier. Il ne reste que pour les chaines reellement techniques qu'un
+   * utilisateur peut avoir a recopier ou comparer caractere par caractere : un
+   * hote d'API, un identifiant, un jeton. Aucune fonte n'est chargee pour lui,
+   * la pile du systeme suffit a cet usage marginal. */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Echelle de MASTER § 4 : 12 · 13 · 14 · 16 · 20 · 24. Six valeurs, et le
    * rapport du plus grand au plus petit tient dans un facteur 2. C'est ce
@@ -144,12 +206,26 @@
   --text-20: 20px;
   --text-24: 24px;
 
+  /* DEUX TAILLES D'AFFICHE, hors de l'echelle ci-dessus, et c'est deliberé.
+   *
+   * L'echelle 12-24 gouverne la SURFACE DE TRAVAIL, ou « aucun titre
+   * surdimensionne » est la regle. Le volet d'identite de l'ecran sans session
+   * n'est pas une surface de travail : c'est une couverture, vue une fois par
+   * jour, et sa typographie est celle d'une affiche. Les nommer ici plutot que
+   * de les ecrire en dur dans le layout rend l'exception VISIBLE et unique —
+   * deux valeurs, un seul consommateur. */
+  --text-affiche: 76px; /* Le titre du volet d'identite */
+  --text-affiche-chiffre: 46px; /* Les trois chiffres du catalogue */
+
   --leading-corps: 1.5; /* MASTER § 4, texte courant */
   --leading-titre: 1.25;
   --leading-marque: 1.1; /* Le nom sur deux lignes, comme le logo fourni */
+  --leading-affiche: 0.9; /* Le titre d'affiche : trois lignes serrees */
 
   --tracking-titre: -0.01em;
   --tracking-colonne: 0.04em; /* Libelles de colonnes en capitales */
+  --tracking-affiche: 0.006em; /* Barlow Condensed 700 a 76 px se resserre trop */
+  --tracking-etiquette: 0.13em; /* Libelles de champ en capitales condensees */
 
   /* ==================================================================
    * Densite — style Data-Dense Dashboard (MASTER § 2)
@@ -235,11 +311,26 @@
  * « Un tableau de budget doit se lire comme un registre, pas comme un tableau
  * web. Sans tabulaire, les colonnes dansent d'une ligne a l'autre. »
  *
+ * LES CHIFFRES SONT EN BARLOW — LA POLICE DE TEXTE — ET JAMAIS EN BARLOW
+ * CONDENSED. Ce n'est pas un choix esthetique, c'est une mesure :
+ *
+ *     police             111111 vs 999999 a 40 px, avec tabular-nums
+ *     Barlow                 0,00 px   -> la fonte `tnum` existe et agit
+ *     Barlow Condensed       7,32 px   -> la fonte `tnum` est ABSENTE
+ *
+ * Barlow Condensed ignore `font-variant-numeric` : elle n'embarque pas de
+ * chasse tabulaire. Un titre peut donc porter un chiffre isole, mais une
+ * COLONNE de montants composee en Condensed se decale ligne a ligne, en
+ * silence, sans qu'aucune regle CSS ne signale l'echec. C'est exactement le
+ * defaut que ces deux utilitaires existent pour empecher.
+ *
+ * Le monospace a disparu d'ici : il n'y a plus de Fira Code, et Barlow tabulaire
+ * fait le travail sans faire sonner un montant comme un extrait de code.
+ *
  * Deux utilitaires et non un, parce que la regle a deux moities :
  *
- *   `chiffres`         Fira Code + chasse tabulaire. Pour tout nombre, y
- *                      compris au fil du texte, ou l'aligner a droite n'aurait
- *                      aucun sens.
+ *   `chiffres`         chasse tabulaire. Pour tout nombre, y compris au fil du
+ *                      texte, ou l'aligner a droite n'aurait aucun sens.
  *   `colonne-chiffres` la meme chose, alignee a droite. Pour une COLONNE de
  *                      nombres — c'est la que « alignes a droite » se joue, et
  *                      c'est ce que la liste de rejet verifie.
@@ -249,14 +340,39 @@
  * ==================================================================== */
 
 @utility chiffres {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
 
 @utility colonne-chiffres {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
   text-align: right;
+}
+
+/*
+ * ====================================================================
+ * La bande de chantier
+ *
+ * Le SEUL motif de la marque, et il n'est pas decoratif : c'est le ruban de
+ * signalisation qu'on tend autour d'une zone de travaux. Il ferme le volet
+ * d'identite de l'ecran sans session en pied, et le volet du formulaire en tete
+ * — les deux se repondent en diagonale. Il servira aussi de bandeau de prise de
+ * controle, ou son sens est litteral : « zone sous surveillance ».
+ *
+ * 135deg et non 45deg : la diagonale descend de gauche a droite, comme un ruban
+ * tendu. 19 px d'ambre, 19 px de marine, soit une periode de 38 px.
+ *
+ * L'AMBRE NE PORTE JAMAIS DE TEXTE — blanc dessus vaut 2,16:1. La bande est un
+ * aplat de 9 px de haut ; rien ne s'ecrit dedans.
+ * ==================================================================== */
+
+@utility bande-chantier {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--color-warn-fill) 0 19px,
+    var(--color-navy) 19px 38px
+  );
 }
