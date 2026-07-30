@@ -7,62 +7,44 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#13233B; --line-navy:#22354F;
+  --navy:#13233B; --navy-line:#2B3E59;
   --green:#1FA37A; --green-strong:#157C5C; --green-dark:#0F6349;
   --amber:#E8A33D;
-  --slate:#5A6B82;
+  --slate:#5A6B82; --slate-2:#8B99AC;
   --bg:#F4F7FA; --line:#E3E8EF; --line-2:#D5DDE7;
   --ease:cubic-bezier(.23,1,.32,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:'Barlow',system-ui,sans-serif;color:var(--navy);background:var(--bg);-webkit-font-smoothing:antialiased}
+body{font-family:'Barlow',system-ui,sans-serif;color:var(--navy);background:#fff;-webkit-font-smoothing:antialiased}
 .num{font-variant-numeric:tabular-nums}
 
-.page{display:grid;grid-template-columns:1fr 7px 452px;height:100%}
+.page{display:grid;grid-template-columns:1fr 480px;height:100%}
 
 /* ═══════════ VOLET IDENTITÉ ═══════════ */
 .id{
   position:relative;background:var(--navy);color:#fff;overflow:hidden;
-  display:flex;flex-direction:column;padding:38px 56px 30px;
+  display:flex;flex-direction:column;
+  padding:56px 60px 46px;
 }
-/* Trame de plan, très discrète. Structure, pas décoration. */
-.id::before{
-  content:"";position:absolute;inset:0;
-  background-image:linear-gradient(var(--line-navy) 1px,transparent 1px),linear-gradient(90deg,var(--line-navy) 1px,transparent 1px);
-  background-size:34px 34px;opacity:.5;
-}
-/* La feuille de la marque, très grande, débordant du volet : elle ancre la composition. */
+/* Le logo en haut, le bloc de contenu poussé vers le bas. */
+.id .core{margin-top:auto}
+/* Bande d'avertissement en pied, comme validée. */
 .id::after{
-  content:"";position:absolute;right:-150px;bottom:-200px;width:680px;height:680px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 26C6 14 14 6 27 5c1 13-7 21-21 21z' fill='%231FA37A'/%3E%3C/svg%3E") no-repeat center/contain;
-  opacity:.055;
+  content:"";position:absolute;left:0;right:0;bottom:0;height:9px;
+  background:repeating-linear-gradient(135deg,var(--amber) 0 19px,var(--navy) 19px 38px);
 }
 .id>*{position:relative;z-index:1}
 
-.mk{display:flex;align-items:center;gap:12px}
-.mk .g{width:44px;height:44px;border-radius:12px;background:var(--green);display:grid;place-items:center;flex:none}
-.mk h1{font-family:'Barlow Condensed';font-weight:700;font-size:21px;line-height:.96;letter-spacing:.02em;text-transform:uppercase}
-.mk h1 sup{font-size:9px;vertical-align:super;font-weight:600;opacity:.7}
-
-/* Le bloc occupe l'espace au lieu de flotter au milieu de deux vides. */
-.core{margin-top:auto;padding-top:44px}
-.kick{
-  display:inline-flex;align-items:center;gap:9px;
-  font-family:'Barlow Condensed';font-weight:600;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--green);margin-bottom:16px;
+.id h2{
+  font-family:'Barlow Condensed';font-weight:700;font-size:78px;line-height:.9;
+  letter-spacing:.006em;text-transform:uppercase;max-width:13ch;
 }
-.kick::before{content:"";width:26px;height:2px;background:var(--green)}
-.core h2{
-  font-family:'Barlow Condensed';font-weight:700;font-size:64px;line-height:.92;
-  letter-spacing:.008em;text-transform:uppercase;max-width:18ch;
-}
-.core h2 em{font-style:normal;color:var(--green)}
-.core p{font-size:15.5px;line-height:1.52;color:#A9B7C9;max-width:48ch;margin-top:20px}
+.id h2 em{font-style:normal;color:var(--amber)}
+.id p{font-size:15.5px;line-height:1.52;color:#A9B7C9;max-width:44ch;margin-top:22px}
 
-/* Chiffres : filets verticaux, tabulaires, hiérarchie franche. */
-.figs{display:flex;margin-top:36px;border-top:1px solid var(--line-navy);padding-top:20px}
-.figs>div{padding-right:34px;margin-right:34px;border-right:1px solid var(--line-navy)}
+.figs{display:flex;margin-top:46px}
+.figs>div{padding-right:32px;margin-right:32px;border-right:1px solid var(--navy-line)}
 .figs>div:last-child{border-right:0;margin-right:0;padding-right:0}
 .figs b{
   font-family:'Barlow Condensed';font-weight:700;font-size:48px;line-height:.9;display:block;
@@ -70,71 +52,75 @@ body{font-family:'Barlow',system-ui,sans-serif;color:var(--navy);background:var(
 }
 .figs span{
   font-family:'Barlow Condensed';font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;
-  color:#7A8AA0;display:block;margin-top:7px;
+  color:var(--slate-2);display:block;margin-top:8px;
 }
-
-.id-foot{
-  margin-top:32px;padding-top:18px;border-top:1px solid var(--line-navy);
-  display:flex;align-items:center;justify-content:space-between;gap:20px;
-  font-size:12.5px;color:#6F7F96;
-}
-.id-foot b{font-family:'Barlow Condensed';font-weight:600;letter-spacing:.13em;text-transform:uppercase;font-size:11px;color:#8B99AC}
-
-/* ═══════════ COUTURE ═══════════ */
-/* La bande d'avertissement devient la couture entre les volets : elle structure,
-   elle ne décore pas, et elle ne se fait plus couper au bord. */
-.seam{background:repeating-linear-gradient(180deg,var(--amber) 0 14px,var(--navy) 14px 28px)}
 
 /* ═══════════ VOLET FORMULAIRE ═══════════ */
-.auth{background:#fff;display:flex;flex-direction:column}
-.auth-top{
-  height:58px;flex:none;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;padding:0 34px;
+.auth{
+  background:#fff;display:flex;flex-direction:column;
+  padding:56px 56px 46px;border-left:1px solid var(--line);
 }
-.auth-top b{font-family:'Barlow Condensed';font-weight:600;font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--slate)}
-.auth-top i{font-style:normal;font-family:'Barlow Condensed';font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-strong);background:#E7F5F0;padding:3px 8px;border-radius:4px}
+/* Le logo, en haut du volet identité et nulle part ailleurs. */
+.mk{display:flex;align-items:center;gap:13px;flex:none}
+.mk .g{width:46px;height:46px;border-radius:12px;background:var(--green);display:grid;place-items:center;flex:none}
+.mk h1{font-family:'Barlow Condensed';font-weight:700;font-size:22px;line-height:.94;letter-spacing:.02em;text-transform:uppercase}
+.mk h1 sup{font-size:9.5px;vertical-align:super;font-weight:600;color:var(--slate-2)}
 
-.auth-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 34px}
-.auth-body h3{font-family:'Barlow Condensed';font-weight:700;font-size:32px;line-height:1;letter-spacing:.015em;text-transform:uppercase}
-.auth-body .sub{font-size:13.5px;color:var(--slate);margin:5px 0 26px}
+/* Les champs, centrés verticalement — décision validée, ne pas ancrer en haut. */
+.form{flex:1;display:flex;flex-direction:column;justify-content:center}
 
-.fd{margin-bottom:16px}
-label{display:block;font-family:'Barlow Condensed';font-weight:600;font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--slate);margin-bottom:6px}
+.fd{margin-bottom:20px}
+label{
+  display:block;font-family:'Barlow Condensed';font-weight:600;font-size:11.5px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--slate);margin-bottom:8px;
+}
+.wrap{position:relative}
 .in{
-  width:100%;height:46px;border:1.5px solid var(--line-2);border-radius:5px;
-  padding:0 13px;font:inherit;font-size:14.5px;color:var(--navy);background:#fff;
+  width:100%;height:52px;border:1.5px solid var(--line-2);border-radius:6px;
+  padding:0 15px;font:inherit;font-size:15px;color:var(--navy);background:#fff;
   transition:border-color .14s var(--ease),box-shadow .14s var(--ease);
 }
-.in::placeholder{color:#9AA7B7}
-.in:focus{outline:0;border-color:var(--green-strong);box-shadow:0 0 0 3px rgba(21,124,92,.14)}
+.in::placeholder{color:#A3AFBE}
+.in:hover{border-color:#BDC8D6}
+.in:focus{outline:0;border-color:var(--green-strong);box-shadow:0 0 0 3px rgba(21,124,92,.15)}
+.in.pw{padding-right:50px}
+
+/* Afficher / masquer : exigé par le referentiel, il manquait. */
+.eye{
+  position:absolute;top:0;right:0;width:50px;height:52px;border:0;background:none;
+  display:grid;place-items:center;cursor:pointer;color:var(--slate-2);border-radius:0 6px 6px 0;
+  transition:color .14s var(--ease);
+}
+.eye:hover{color:var(--navy)}
+.eye:focus-visible{outline:2px solid var(--green-strong);outline-offset:-2px}
 
 .bt{
-  width:100%;height:48px;border:0;border-radius:5px;background:var(--green-strong);color:#fff;
-  font-family:'Barlow Condensed';font-weight:700;font-size:16.5px;letter-spacing:.1em;text-transform:uppercase;
+  width:100%;height:54px;border:0;border-radius:6px;background:var(--green-strong);color:#fff;
+  font-family:'Barlow Condensed';font-weight:700;font-size:17.5px;letter-spacing:.11em;text-transform:uppercase;
   cursor:pointer;margin-top:10px;
   transition:background-color .14s var(--ease),transform .1s var(--ease);
 }
 .bt:hover{background:var(--green-dark)}
 .bt:active{transform:scale(.98)}
+.bt:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
 
-.row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:12px}
-.row a{font-size:13px;color:var(--green-strong);text-decoration:none;font-weight:600;border-bottom:1px solid transparent;transition:border-color .14s var(--ease)}
-.row a:hover{border-bottom-color:var(--green-strong)}
-.row span{font-size:12.5px;color:#8B99AC;text-align:right}
-
-/* Le formulaire est tenu par le bas : il ne flotte plus. */
-.auth-foot{
-  flex:none;border-top:1px solid var(--line);padding:16px 34px;
-  display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--slate);
+.lk{
+  display:inline-block;margin-top:22px;font-size:13.5px;color:var(--green-strong);
+  text-decoration:none;font-weight:600;border-bottom:1.5px solid transparent;
+  transition:border-color .14s var(--ease);
 }
-.auth-foot .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
-.auth-foot code{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--navy);background:var(--bg);padding:2px 6px;border-radius:3px;border:1px solid var(--line)}
+.lk:hover{border-bottom-color:var(--green-strong)}
 
-@media (max-width:1120px){
-  .page{grid-template-columns:1fr 7px 400px}
-  .core h2{font-size:50px}
+.auth-foot{flex:none;font-size:12.5px;color:var(--slate-2)}
+.auth-foot code{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--slate);background:var(--bg);padding:2px 7px;border-radius:4px;border:1px solid var(--line)}
+
+@media (max-width:1160px){
+  .page{grid-template-columns:1fr 420px}
+  .id{padding:44px 44px 40px}
+  .id h2{font-size:60px}
   .figs b{font-size:38px}
   .figs>div{padding-right:24px;margin-right:24px}
+  .auth{padding:44px 40px 38px}
 }
 </style>
 </head>
@@ -144,64 +130,61 @@ label{display:block;font-family:'Barlow Condensed';font-weight:600;font-size:11.
 
   <section class="id">
     <div class="mk">
-      <span class="g"><svg width="24" height="24" viewBox="0 0 32 32" fill="#fff"><path d="M6 26C6 14 14 6 27 5c1 13-7 21-21 21z"/></svg></span>
+      <span class="g"><svg width="25" height="25" viewBox="0 0 32 32" fill="#fff" aria-hidden="true"><path d="M6 26C6 14 14 6 27 5c1 13-7 21-21 21z"/></svg></span>
       <h1>Chantier<br>Tranquille<sup>®</sup></h1>
     </div>
 
     <div class="core">
-      <span class="kick">Compte inter-entreprises général</span>
-      <h2>Les dépenses communes, <em>tenues au poste près</em></h2>
-      <p>Base vie, fluides, bennes, gardiennage, clés. Ce que dix entreprises se partagent sur un chantier — chiffré avant le premier coup de pelle, suivi mois par mois, traçable jusqu'au document contractuel.</p>
-
+      <h2>Dépenses communes, <em>compte tenu</em></h2>
+      <p>Base vie, fluides, bennes, gardiennage. Ce que dix entreprises partagent sur un chantier, chiffré avant le premier coup de pelle.</p>
       <div class="figs">
         <div><b class="num">19</b><span>Prestations</span></div>
-        <div><b class="num">3</b><span>Formules</span></div>
+        <div><b class="num">3</b><span>Offres</span></div>
         <div><b class="num">24</b><span>Mois suivis</span></div>
-        <div><b class="num">100&nbsp;%</b><span>Déchets tracés</span></div>
       </div>
-    </div>
-
-    <div class="id-foot">
-      <b>Convention CIEG · annexe CCTP lots communs</b>
-      <span>Prorata classique · amélioré · lot 00</span>
     </div>
   </section>
 
-  <div class="seam"></div>
-
   <section class="auth">
-    <div class="auth-top">
-      <b>Espace de gestion</b>
-      <i>Développement</i>
-    </div>
-
-    <div class="auth-body">
-      <h3>Connexion</h3>
-      <div class="sub">Identifiez-vous pour accéder à vos projets.</div>
-
+    <form class="form" novalidate>
       <div class="fd">
         <label for="e">Adresse e-mail</label>
-        <input class="in" id="e" type="email" placeholder="prenom.nom@entreprise.fr" autocomplete="username">
+        <div class="wrap">
+          <input class="in" id="e" name="email" type="email" inputmode="email"
+                 autocomplete="username" placeholder="prenom.nom@entreprise.fr">
+        </div>
       </div>
+
       <div class="fd">
         <label for="p">Mot de passe</label>
-        <input class="in" id="p" type="password" autocomplete="current-password">
+        <div class="wrap">
+          <input class="in pw" id="p" name="password" type="password" autocomplete="current-password">
+          <button class="eye" type="button" id="t" aria-label="Afficher le mot de passe">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1.8 12S5.4 5.2 12 5.2 22.2 12 22.2 12 18.6 18.8 12 18.8 1.8 12 1.8 12z"/>
+              <circle cx="12" cy="12" r="3.1"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <button class="bt">Se connecter</button>
+      <button class="bt" type="submit">Se connecter</button>
+      <a class="lk" href="#">Mot de passe oublié&nbsp;?</a>
+    </form>
 
-      <div class="row">
-        <a href="#">Mot de passe oublié</a>
-        <span>Invité&nbsp;? Utilisez votre lien.</span>
-      </div>
-    </div>
-
-    <div class="auth-foot">
-      <span class="dot"></span>
-      API <code>localhost:8010</code>
-    </div>
+    <div class="auth-foot">API <code>localhost:8010</code></div>
   </section>
 
 </div>
+
+<script>
+const p = document.getElementById('p'), t = document.getElementById('t');
+t.addEventListener('click', () => {
+  const shown = p.type === 'text';
+  p.type = shown ? 'password' : 'text';
+  t.setAttribute('aria-label', shown ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
+  p.focus();
+});
+</script>
 </body>
 </html>

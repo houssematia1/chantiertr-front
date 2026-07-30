@@ -171,40 +171,57 @@ Les libellés et le regroupement du menu viennent du logiciel d'origine, pas d'u
 
 ---
 
-## 10. Écrans sans session — direction validée par le client
+---
 
-**Référence visuelle : `design-system/reference/connexion.html`.** Elle a été validée écran à l'écran après quatre pistes comparées. Elle fait foi. Ce n'est pas une inspiration, c'est le modèle à transposer en React.
+## 10. Écrans sans session — direction validée
 
-Direction retenue : **signalétique de chantier.** Trois pistes ont été écartées — presse technique suisse, registre contractuel en serif, instrument sombre monospace.
+**Référence : `design-system/reference/connexion.html`.** Validée à l'écran par le client après comparaison de quatre pistes, puis trois itérations. **Elle fait foi et se transpose telle quelle en React** — elle ne s'interprète pas.
 
-### La composition
+Direction retenue : **signalétique de chantier.** Écartées : presse technique suisse, registre contractuel en serif, instrument sombre monospace.
 
-Deux volets pleine hauteur, séparés par une couture de 7 px, sans marge extérieure.
+### Composition
 
-**Volet identité** — marine, environ deux tiers de la largeur :
-- Le logo ancré en haut à gauche
-- Un bloc central poussé vers le bas par `margin-top:auto` : accroche, titre, paragraphe, chiffres
-- Un pied de volet séparé par un filet, portant du contenu métier réel — convention CIEG, noms des formules
-- **Une trame de plan** en fond, pas de la décoration : deux dégradés linéaires à 34 px, opacité 0,5
-- **La feuille du logo en très grand**, 680 px, débordant en bas à droite, opacité 0,055. C'est elle qui ancre la composition et empêche l'aplat marine de paraître vide.
+Deux volets pleine hauteur, sans marge extérieure. Gauche `1fr`, droite **480 px fixes**.
 
-**Couture** — la bande d'avertissement ambre en **rayures verticales**, entre les deux volets. Elle structure au lieu de décorer, et ne se fait pas couper au bord comme le faisait une bande en pied.
+**Volet gauche — identité, marine :**
+- **Le logo en haut à gauche, et nulle part ailleurs.** Le dupliquer dans le volet droit a été essayé puis rejeté.
+- Un bloc poussé vers le bas par `margin-top:auto` : titre, paragraphe, chiffres
+- **La bande d'avertissement ambre en pied**, 9 px, rayures à 135°. En pied du volet, pas en couture entre les volets — une version en couture verticale a été essayée puis rejetée.
 
-**Volet formulaire** — blanc, 452 px fixes :
-- Une barre supérieure de 58 px : intitulé de l'espace, et un jeton d'environnement
-- Le formulaire **centré verticalement** — voir ci-dessous
-- Un pied avec l'état de l'API
+**Volet droit — formulaire, blanc :**
+- **Aucun titre, aucun sous-titre.** Ni « Connexion », ni phrase d'accueil. Les champs parlent d'eux-mêmes.
+- Les champs **centrés verticalement**. Les ancrer vers le haut a été essayé puis rejeté.
+- Un pied discret portant l'adresse de l'API
 
-### Trois décisions à ne pas défaire
+### Quatre décisions à ne pas défaire
 
-**Le formulaire est centré verticalement dans son volet.** Une tentative de l'ancrer vers le haut a été explicitement rejetée par le client. Ne pas y revenir.
+Chacune a été essayée dans l'autre sens et rejetée. Ne pas y revenir sans le demander.
 
-**Le vert porte l'emphase du titre, pas l'ambre.** Le vert est la couleur de l'action et de l'état validé ; l'ambre celle de l'alerte. Mettre l'ambre sur le mot fort du titre brouille cette grammaire. L'ambre ne sert qu'à la couture.
+1. **Le logo reste à gauche**, en haut du volet identité.
+2. **Le volet droit ne porte aucun texte** hors libellés de champs et intitulé de bouton.
+3. **Les champs sont centrés verticalement**, pas ancrés en haut.
+4. **La bande d'avertissement est en pied du volet gauche**, pas en couture verticale.
 
-**Le rayon du logo est de 12 px**, en exception assumée à la règle des 4 à 6 px. Un logo n'est pas un contrôle d'interface : une marque garde sa géométrie. Ne pas le « corriger ».
+### Ce que l'ambre porte ici
+
+**L'ambre porte l'emphase du titre** — `compte tenu` en `#E8A33D` sur marine, ratio 6,7:1.
+
+C'est un écart assumé à la discipline de la section 3, qui réserve l'ambre à l'alerte. Le client l'a choisi et c'est sa marque. **La règle de la section 3 reste valable partout ailleurs :** dans l'application connectée, l'ambre alerte et le vert agit.
+
+### Règles de formulaire, du référentiel
+
+Appliquées ici, et attendues sur tout formulaire du produit :
+
+- **Libellé visible au-dessus de chaque champ.** Jamais un placeholder seul.
+- **Bouton afficher / masquer le mot de passe**, avec `aria-label` qui change d'état. Il manquait.
+- **Types sémantiques** : `type="email"`, `inputmode="email"`, `autocomplete="username"` et `current-password`.
+- **Anneau de focus visible** sur les champs, le bouton et la bascule. Jamais supprimé.
+- Champs à **52 px**, bouton à **54 px** — au-delà des 44 px minimum.
+- **20 px entre les champs**, au-delà des 8 px minimum.
+- Champs visuellement distincts : bordure 1,5 px, état de survol distinct de l'état de repos.
 
 ### Typographie de ces écrans
 
-Barlow Condensed 700 en capitales pour les titres, les chiffres et les micro-libellés. Barlow 400/500 pour le texte courant. Titre à 64 px, interligne 0,92.
+Barlow Condensed 700 en capitales pour le titre, les chiffres et les micro-libellés. Barlow 400/500 pour le texte courant. Titre à 78 px, interligne 0,90.
 
-**Cette famille remplace Fira Code et Fira Sans annoncées en section 4 pour les écrans sans session.** La section 4 reste valable pour l'application connectée — tableaux, formulaires métier — où le mono tabulaire fait son travail. À trancher lors du premier écran connecté : unifier, ou assumer deux familles selon le contexte.
+**Ceci remplace Fira Code et Fira Sans de la section 4 sur les écrans sans session.** La section 4 reste valable pour l'application connectée, où le mono tabulaire aligne les colonnes de montants. **Arbitrage en attente :** unifier sur une famille, ou assumer Barlow pour la marque et Fira pour le travail. À trancher au premier écran connecté, quand un tableau de prestations sera visible à côté de cet écran — pas avant.

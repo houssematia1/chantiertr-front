@@ -121,7 +121,13 @@ export function Connexion() {
       </p>
 
       {INDICATION !== undefined && INDICATION !== '' && (
-        <p className="text-slate bg-bg border-line mt-5 rounded-4 border px-3 py-2 text-12">
+        // `chiffres` sur tout l'encart, et non sur ses seuls nombres : c'est une
+        // annotation technique — un port, une racine d'API —, du meme registre
+        // que le `GET /api/v1/me` de l'ecran de profil. La lui appliquer
+        // entierement evite la seule exception qui restait a la regle « tous les
+        // chiffres en tabulaire » de MASTER § 4, sans monospacer de la prose
+        // ailleurs. Le bloc est absent en production.
+        <p className="text-slate bg-bg border-line chiffres mt-5 rounded-4 border px-3 py-2 text-12">
           {INDICATION}
         </p>
       )}
