@@ -164,7 +164,15 @@ describe('la liste de rejet du plan', () => {
     //    navigateurs, trois rendus —, et un libelle visible sur un champ invisible
     //    n'aurait aucun sens. Le bouton porte le libelle, et le champ garde le sien
     //    pour les technologies d'assistance.
-    const permis = ['components/ui/Champ.tsx', 'components/donnees/TeleverseurDeLogo.tsx']
+    //  - `GrilleDesDroits` rend dix-huit cases a cocher. Un libelle VISIBLE par
+    //    case donnerait dix-huit intitules dans un tableau qui porte deja ses
+    //    en-tetes de colonne ; le libelle est donc en `sr-only` et concatene la
+    //    faculte et le profil, ce que `Champ` ne sait pas faire.
+    const permis = [
+      'components/ui/Champ.tsx',
+      'components/donnees/TeleverseurDeLogo.tsx',
+      'pages/GrilleDesDroits.tsx',
+    ]
 
     expect(
       occurrences(/<input\b/g, (chemin) => !permis.some((permis) => chemin.endsWith(permis))),

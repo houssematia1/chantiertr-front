@@ -3,14 +3,16 @@ import { Navigate, createBrowserRouter } from 'react-router'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { ChoisirMotDePasse } from '@/pages/ChoisirMotDePasse'
 import { Connexion } from '@/pages/Connexion'
+import { Comptes } from '@/pages/Comptes'
 import { Contacts } from '@/pages/Contacts'
-import { EcranAVenir } from '@/pages/EcranAVenir'
 import { Entreprises } from '@/pages/Entreprises'
 import { FicheContact } from '@/pages/FicheContact'
 import { FicheEntreprise } from '@/pages/FicheEntreprise'
+import { GrilleDesDroits } from '@/pages/GrilleDesDroits'
 import { Introuvable } from '@/pages/Introuvable'
 import { MonCompte } from '@/pages/MonCompte'
 import { MonEntreprise } from '@/pages/MonEntreprise'
+import { NouveauCompte } from '@/pages/NouveauCompte'
 import { NouveauContact } from '@/pages/NouveauContact'
 import { NouvelleEntreprise } from '@/pages/NouvelleEntreprise'
 import { MotDePasseOublie } from '@/pages/MotDePasseOublie'
@@ -29,9 +31,10 @@ import { GardeDeSession } from '@/router/GardeDeSession'
  * renommer casserait tous les liens deja partis, y compris les invitations
  * valables sept jours.
  *
- * LES `EcranAVenir` RESTANTS DOIVENT AVOIR DISPARU A LA FIN DU LOT S0-B. Il en
- * reste DEUX — les comptes et la grille des droits, tache 5. Les taches 3 et 4 ont
- * retire les quatre autres.
+ * IL N'Y A PLUS AUCUN `EcranAVenir`. La dette du lot est soldee : les six ecrans
+ * de la barre laterale menent tous a un ecran reel. Le composant est retire avec
+ * cette tache — le garder pour un usage futur serait garder une facon de livrer
+ * un ecran vide.
  */
 export const router = createBrowserRouter([
   {
@@ -67,26 +70,9 @@ export const router = createBrowserRouter([
       { path: '/contacts/nouveau', element: <NouveauContact /> },
       { path: '/contacts/:id', element: <FicheContact /> },
       { path: '/mon-entreprise', element: <MonEntreprise /> },
-      {
-        path: '/comptes',
-        element: (
-          <EcranAVenir
-            titre="Utilisateurs"
-            tache={5}
-            objet="L'annuaire des comptes de votre organisation : invitation, archivage, réactivation."
-          />
-        ),
-      },
-      {
-        path: '/droits',
-        element: (
-          <EcranAVenir
-            titre="Grille des droits"
-            tache={5}
-            objet="Les six facultés que la grille sait retirer, profil par profil. Réglable par le super-administrateur seul."
-          />
-        ),
-      },
+      { path: '/comptes', element: <Comptes /> },
+      { path: '/comptes/nouveau', element: <NouveauCompte /> },
+      { path: '/droits', element: <GrilleDesDroits /> },
 
       { path: '/mon-compte', element: <MonCompte /> },
 

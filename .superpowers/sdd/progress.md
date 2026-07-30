@@ -201,14 +201,112 @@ la durée, pas la propriété. Relevé corrigé : zéro élément animé dans le
 
 ---
 
+## Tâches 3, 4 et 5 — annuaires, comptes, grille · **terminées**
+
+### Le design a été refait sur demande, et deux fois
+
+La tâche 3 a d'abord été livrée en **tableau dense** — lignes de 36 px, tri par
+colonne, `aria-sort`, douze tests éprouvés par mutation. Le client l'a refusée en
+bloc : « je veux pas ce theme ni ce police ni le layout », et demandé d'imiter la
+liste de sociétés de l'application Vue de l'équipe.
+
+**Depuis, chaque écran passe par un prototype validé avant qu'une ligne ne soit
+écrite.** C'est la méthode que le client a imposée — « montre un prototype avant de
+commencer » — et elle a économisé deux réécritures : le bandeau coloré en tête de
+carte a été refusé sur maquette, pas sur code.
+
+Les prototypes sont dans `design-system/reference/` :
+`prototype-liste-entreprises.html` et `prototype-contacts-comptes.html`.
+
+### Deux mises en page, et c'est leur choix
+
+**Cartes pour les entreprises, tableau souple pour les personnes.** Ce n'est pas
+une incohérence : une entreprise a un logo et vingt champs, on la lit une par une ;
+une personne a cinq colonnes qu'on compare d'une ligne à l'autre. Les mesures des
+deux viennent de leur SCSS, relevées et non approchées.
+
+Le composant `Tableau` du premier jet est **retiré** — plus rien ne l'emploie. Il
+est dans l'historique, ses tests étaient éprouvés par mutation, il est reprenable
+tel quel si un écran tabulaire arrive au métier.
+
+### Ce que l'API a dû apprendre
+
+| Ajout | Pourquoi |
+|---|---|
+`tel`, `logo_path` | la carte gardait un cadre vide et une colonne de moins |
+`created_at` exposé | il était en base depuis le premier jour |
+`nombre_de_comptes` | sous la **même règle de confidentialité** que le numéro d'adhérent : c'est un effectif |
+`POST/DELETE /companies/{id}/logo` | téléversement, avec le SVG refusé et poids **et** dimensions bornés |
+
+**Deux garde-fous ont refusé mon premier jet, et tous deux avaient raison.**
+`RouteRegistryTest` a rejeté les routes de logo non classées et exigé leur test
+d'isolation. `DomainTest` a rejeté l'action, qui vivait dans `App\Domain` et
+importait `Illuminate\Http\UploadedFile` — le stockage est remonté dans le
+contrôleur, l'action ne garde que l'invariant.
+
+### Cinq erreurs que la vérification a trouvées, et qu'aucun test n'attrapait
+
+1. **`APP_URL` sans le port.** Le téléversement réussissait, l'API rendait 200, et
+   l'image ne s'affichait pas : `Storage::url()` construisait une adresse qui ne
+   résout pas. Les tests vérifient que l'URL *contient* le chemin, pas qu'elle
+   résout. Noté dans `docs/deploiement.md`.
+
+2. **La case de la grille ne basculait pas.** Contrôlée sur la valeur du cache,
+   elle revenait en place au clic et n'attendait que le rafraîchissement. Sur
+   dix-huit cases cela se lit comme une panne. Corrigé par une **mise à jour
+   optimiste** avec retour en arrière sur refus.
+
+3. **Le nom accessible se composait par accident.** « Réglages » plus un
+   complément en `sr-only` donnait `Réglages— Thomas Nguyen`, sans l'espace : le
+   calcul de nom accessible ne joint pas les nœuds comme `textContent`. Le nom est
+   maintenant posé, pas composé.
+
+4. **Une erreur de conception, trouvée par un test qui refusait de passer.** J'avais
+   câblé la visibilité du numéro d'adhérent sur le rôle, côté front. Faux :
+   `CompanyResource` décide seule à qui elle le rend, et un membre le reçoit sur
+   *sa propre* fiche. Deux vérités, la seconde se trompait.
+
+5. **Le test des dimensions d'image a fait tomber le runner.** Générer un
+   9000 × 9000 a épuisé les 512 Mo du processus de test — ce qui EST l'argument
+   pour la borne en pixels, puisque `max:2048` aurait laissé passer ce fichier.
+
+### Trois assertions vacueuses, trouvées par mutation
+
+Elles passaient sans rien prouver, et c'est le mode d'échec que la contre-épreuve
+existe pour attraper :
+
+| Assertion | Pourquoi elle ne prouvait rien |
+|---|---|
+`image` dans les règles du logo | `mimes` lit déjà le contenu — retirer `image` ne fait tomber aucun test. Ma documentation affirmait le contraire |
+« la puce de rôle absente ne se rend pas » | rendre la puce sans condition produit une puce **vide** : aucun texte, assertion verte |
+« Échap rend le focus au déclencheur » | cliquer le bouton lui donne déjà le focus. Il faut le déplacer dans le menu d'abord |
+
+Total sur les trois tâches : **43 mutations**, 40 tuant le bon test du premier
+coup, 3 ayant révélé un test à refaire.
+
+### État
+
+**117 tests front** (29 au début de la tâche 3), `tsc -b`, ESLint,
+`npm run build`. **695 tests API**, PHPStan niveau 8, Pint.
+
+**Il n'y a plus aucun `EcranAVenir`.** La dette du lot est soldée : les six entrées
+de la barre latérale mènent toutes à un écran réel, et le composant est retiré —
+le garder serait garder une façon de livrer un écran vide.
+
+**L'emprunt de compte est complet.** Le bandeau existait depuis la tâche 2 sans
+déclencheur ; « Se connecter en tant que » l'allume depuis l'annuaire des comptes,
+et le cycle a été vérifié de bout en bout contre l'API.
+
+---
+
 ## Reste à faire
 
 | # | Tâche | État |
 |---|---|---|
 | 2 | Shell, barre latérale filtrée par rôle, bandeau d'impersonation | **terminée** |
-| 3 | Annuaire des entreprises et fiche | à faire |
-| 4 | Contacts et carnet d'adresses | à faire |
-| 5 | Comptes et grille de droits | à faire |
+| 3 | Annuaire des entreprises et fiche | **terminée** |
+| 4 | Contacts et carnet d'adresses | **terminée** |
+| 5 | Comptes et grille de droits | **terminée** |
 | 6 | Mon compte et flux de lien | partiel — les écrans existent en lecture, l'édition reste à faire |
 | 7 | Quatre parcours Playwright et intégration continue | à faire |
 
@@ -217,8 +315,13 @@ typographique en attente.
 
 **Ouvert côté client :** le Superviseur peut-il écrire dans l'annuaire.
 
-**Dette de ce lot, à solder avant sa clôture :** les cinq `EcranAVenir`. Chacun
-est remplacé par une tâche 3, 4 ou 5. S'il en reste un, c'est un écran vide livré.
+**Dette soldée :** les cinq `EcranAVenir` ont disparu, et le composant avec eux.
+
+**Dette ouverte — la typographie.** Deux systèmes coexistent : Barlow sur l'écran
+de connexion validé, Roboto et Montserrat dans l'application. Douze fichiers de
+fonte. Les jetons sont séparés — `--font-affiche` ne s'emploie que sous
+`AuthLayout` —, donc rien ne se mélange, mais le poids reste. Soit la connexion
+passe en Roboto/Montserrat, soit la dette reste. **À trancher par le client.**
 
 **En attente côté API :** la PR #2 doit être fusionnée avant que le front ne soit
 déployable — `GET /me` sans `emprunt` ferait un shell sans bandeau, et sans
