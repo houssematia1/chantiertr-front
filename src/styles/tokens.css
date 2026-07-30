@@ -1,0 +1,199 @@
+/*
+ * Jetons visuels de Chantier Tranquille.
+ *
+ * TOUTES les valeurs de ce fichier sont RELEVEES dans l'application d'origine
+ * — `chantiertr-api/docs/legacy-index.html`, bloc `<style>` des lignes 15951 a
+ * 16427. Aucune n'est inventee. Chaque groupe porte sa ligne d'origine, pour
+ * qu'un ecart se constate au lieu de se discuter.
+ *
+ * Le registre tient dans deux chiffres : le rayon des cartes est de 14 px et
+ * l'ombre plafonne a 6 % d'opacite. Sobre, dense, professionnel — un outil de
+ * travail, pas une vitrine.
+ */
+
+@theme {
+  /* ------------------------------------------------------------------
+   * Couleurs — legacy 15952-15964
+   *
+   * Bleu marine et vert. Le prefixe `--orvea-*` du legacy disparait : c'est
+   * une marque tierce, et le plan l'interdit. La valeur, elle, ne change pas.
+   * ------------------------------------------------------------------ */
+
+  /* 15953-15955 */
+  --color-green: #1fa37a;
+  --color-green-d: #157c5c;
+  --color-green-l: #e7f5f0;
+
+  /* 15956-15958 */
+  --color-navy: #13233b;
+  --color-navy-soft: #2b3e59;
+  --color-slate: #5a6b82;
+
+  /* 15959-15961 */
+  --color-line: #e3e8ef;
+  --color-bg: #f4f7fa;
+  --color-card: #ffffff;
+
+  /* 15962-15964 */
+  --color-warn: #e8a33d;
+  --color-danger: #d9534f;
+  --color-ok: #1fa37a;
+
+  /* Gris de structure recurrents, releves dans les composants :
+   * en-tete de tableau 16137, survol de ligne 16142, filet interne 16232,
+   * pastille neutre 16054, bordure sur fond vert 16107 et 16209. */
+  --color-thead: #eef2f7;
+  --color-row-hover: #fafbfd;
+  --color-line-soft: #f0f3f7;
+  --color-chip: #eef1f5;
+  --color-green-line: #bfe6d8;
+  --color-green-line-soft: #cdeadf;
+  --color-danger-line: #f1c6c4;
+
+  /* ------------------------------------------------------------------
+   * Typographie — legacy 15969 (corps) et sizes releves un a un
+   *
+   * Le corps est a 14 px et le titre de page a 25 px : l'ecart total de
+   * l'echelle tient dans un facteur 1,8. C'est ce resserrement qui fait la
+   * densite — pas de titre surdimensionne, jamais.
+   *
+   * L'echelle progresse par demi-pixels de 9,5 a 14 px, la ou le texte
+   * d'interface se joue, puis par pas entiers. Ces demi-pixels ne sont pas
+   * une coquetterie : ils sont dans la source, et les arrondir tasserait
+   * l'echelle.
+   * ------------------------------------------------------------------ */
+
+  /* Le legacy ne charge PAS Inter (seul `Dancing Script` est importe, 16425) :
+   * la pile retombe donc sur la police systeme. Elle est reprise a
+   * l'identique pour que les captures soient comparables. */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --text-9\.5: 9.5px; /* 16089, 16313 */
+  --text-10: 10px; /* 15981, 15983, 16310, 16388 */
+  --text-10\.5: 10.5px; /* 16037, 16043, 16153, 16258, 16297 */
+  --text-11: 11px; /* 15988, 16091, 16137, 16210, 16278, 16384 */
+  --text-11\.5: 11.5px; /* 16003, 16040, 16104, 16164, 16304 */
+  --text-12: 12px; /* 16064, 16099, 16216, 16260, 16318 */
+  --text-12\.5: 12.5px; /* 16023, 16074, 16172, 16231, 16355 */
+  --text-13: 13px; /* 16008, 16066, 16136, 16204, 16383 */
+  --text-13\.5: 13.5px; /* 16016, 16031, 16286, 16324, 16418 */
+  --text-14: 14px; /* 15969 — le CORPS, et le defaut du produit */
+  --text-15: 15px; /* 15987, 16042, 16106, 16395 */
+  --text-15\.5: 15.5px; /* 16098 */
+  --text-16: 16px; /* 16039 */
+  --text-17: 17px; /* 15979, 15980 */
+  --text-18: 18px; /* 15989, 16105, 16135, 16211 */
+  --text-19: 19px; /* 16178 */
+  --text-20: 20px; /* 16070, 16270, 16309 — et le titre de connexion, 4009 */
+  --text-22: 22px; /* 16305 */
+  --text-23: 23px; /* 16165 */
+  --text-25: 25px; /* 16030 — LE PLUS GROS TEXTE DU PRODUIT */
+  --text-26: 26px; /* 16215 */
+  --text-40: 40px; /* 16057, 16188 — pictogrammes d'etat vide seulement */
+
+  /* Interlignes releves : 1.5 sur le corps (15969), 1.05 sur le bloc de
+   * marque du pave de connexion (4009), 1.7 sur la convention imprimee
+   * (16177). */
+  --leading-marque: 1.05;
+  --leading-corps: 1.5;
+  --leading-doc: 1.7;
+
+  /* Graisses : 700 sur les titres (15970), 800 sur la marque et les chiffres
+   * (15979, 16165, 16305). Interlettrage negatif sur les titres (15970) et
+   * positif sur les sur-titres capitales (15983). */
+  --tracking-titre: -0.01em; /* 15970 */
+  --tracking-chiffre: -0.02em; /* 16165 */
+  --tracking-surtitre: 0.14em; /* 15983 */
+  --tracking-marque: 0.16em; /* 15981 */
+
+  /* ------------------------------------------------------------------
+   * Espacement — base 1 px
+   *
+   * ARBITRAGE. Le legacy n'a PAS de grille de 4 px : il espace en 9, 11, 13,
+   * 17, 22, 34 px (15978, 16016, 16038, 16000...). Aligner ces valeurs sur
+   * une grille de 4 px les ferait toutes monter — et « des espacements
+   * doubles de ce qu'il faut » est precisement le defaut contre lequel ce lot
+   * existe.
+   *
+   * La base est donc de 1 px : `px-17 py-10` sur un bouton EST la ligne
+   * 16016, lisible telle quelle dans la classe. Le prix a payer est que `p-4`
+   * vaut 4 px et non 16 px — contre-intuitif pour qui connait Tailwind, et
+   * c'est le seul endroit du projet ou l'echelle par defaut est remplacee.
+   * ------------------------------------------------------------------ */
+  --spacing: 1px;
+
+  /* ------------------------------------------------------------------
+   * Rayons — legacy 15966 pour `--radius`, le reste releve au composant
+   *
+   * 14 px, pas 24. Les cles portent leur valeur pour rester tracables.
+   * ------------------------------------------------------------------ */
+  --radius-5: 5px; /* 16182, 16388 */
+  --radius-6: 6px; /* 16264, 16353 */
+  --radius-7: 7px; /* 16127, 16150, 16204 */
+  --radius-8: 8px; /* 15984, 16023, 16080, 16395 */
+  --radius-9: 9px; /* 15979, 16003, 16340, 16344 */
+  --radius-10: 10px; /* 16016, 16076 — BOUTONS ET CHAMPS */
+  --radius-11: 11px; /* 16103, 16268, 16418 */
+  --radius-12: 12px; /* 16002, 16084, 16121, 16212 */
+  --radius-13: 13px; /* 16133, 16161, 16276 */
+  --radius-14: 14px; /* 15966 — `--radius`, LE RAYON DES CARTES */
+  --radius-18: 18px; /* 16000, 16062 — pave de connexion et modale */
+  --radius-pill: 20px; /* 16037, 16043, 16153 — pastilles */
+
+  /* ------------------------------------------------------------------
+   * Ombres — legacy 15965 et suivantes
+   *
+   * ECART RELEVE. Le plan annonce « une ombre, discrete, une seule » et cite
+   * `0 1px 3px rgba(19,35,59,.06)`. La source en porte DEUX couches (15965) :
+   * la seconde est un halo large a 5 % d'opacite. Le fichier suit la source.
+   * « A peine visible » reste vrai ; « unique » ne l'est pas.
+   * ------------------------------------------------------------------ */
+  --shadow-card: 0 1px 3px rgb(19 35 59 / 0.06), 0 8px 24px rgb(19 35 59 / 0.05); /* 15965 */
+  --shadow-flat: 0 1px 3px rgb(19 35 59 / 0.05); /* 16283 */
+  --shadow-kpi: 0 2px 8px rgb(19 35 59 / 0.06); /* 16303 */
+  --shadow-lift: 0 4px 12px rgb(19 35 59 / 0.1); /* 16269, 16285 */
+  --shadow-hover: 0 12px 30px rgb(19 35 59 / 0.1); /* 16035 */
+  --shadow-modal: 0 30px 80px rgb(0 0 0 / 0.3); /* 16062 */
+
+  /* ------------------------------------------------------------------
+   * Mouvement
+   *
+   * Les COURBES ne sont PAS dans la source : le legacy ecrit
+   * `transition:.15s`, soit `all` avec la courbe `ease` par defaut. Les deux
+   * sont a corriger — `all` fait travailler des proprietes qu'on n'a pas
+   * nommees, et les courbes natives sont trop molles. Les valeurs viennent du
+   * plan (§ « Ce que dit la philosophie d'Emil »).
+   *
+   * `--ease-out` remplace la courbe de sortie par defaut de Tailwind, de sorte
+   * que la classe `ease-out` porte la bonne valeur partout.
+   * ------------------------------------------------------------------ */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Il n'existe pas d'`ease-in` dans ce produit, et ce n'est pas un oubli :
+   * une courbe qui demarre lentement le fait au moment precis ou l'oeil
+   * regarde. Toute entree ou sortie prend `ease-out`. */
+}
+
+/*
+ * Deux familles de valeurs relevees n'ont PAS de namespace de theme dans
+ * Tailwind v4 : les epaisseurs de trait et les durees. Les inscrire dans
+ * `@theme` produirait des variables mortes. Elles sont donc documentees ici et
+ * s'ecrivent avec les utilitaires natifs.
+ *
+ * EPAISSEURS DE TRAIT. 1 px partout, et c'est la regle — 15977, 15978, 16000,
+ * 16021. Les exceptions portent toutes un sens :
+ *   `border`            1 px    le defaut, partout
+ *   `border-[1.5px]`    1,5 px  pointille d'etat vide 16056, option 16112
+ *   `border-2`          2 px    zone de depot 16212, tuile choisie 16268
+ *   `border-t-3`        3 px    arete coloree en tete de tuile 16161, 16277
+ *   `border-t-[3.5px]`  3,5 px  16303
+ *
+ * DUREES. Toutes deja sous 300 ms dans la source :
+ *   `duration-140`  retour de clic — la fourchette utile est 100-160 ms
+ *   `duration-150`  le cas dominant : 15984, 16016, 16086 (`.15s`)
+ *   `duration-180`  glissement de la barre laterale : 15977, 16006 (`.18s`)
+ *   `duration-200`  entree d'un ecran vu une fois par jour
+ *
+ * Rien au-dela de 300 ms.
+ */

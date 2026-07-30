@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/*
+ * Bases globales, relevees ligne 15968-15973 du legacy.
+ *
+ * Rien d'autre ne vit ici : les composants portent leurs propres classes
+ * utilitaires. Ce fichier ne contient que ce qui ne peut pas s'exprimer en
+ * classe — les defauts du document et les regles d'accessibilite.
+ */
+
+@layer base {
+  /* 15969 : le corps est a 14 px, interligne 1.5, lissage active. */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-navy);
+    font-family: var(--font-sans);
+    font-size: var(--text-14);
+    line-height: var(--leading-corps);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 15970 : les titres sont en 700 avec un interlettrage negatif. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 700;
+    letter-spacing: var(--tracking-titre);
+    color: var(--color-navy);
+  }
+
+  /* 15972 : les champs heritent de la police et restent a 14 px. Sans cette
+   * regle, Safari impose sa propre police aux `input`. */
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Le focus au clavier reste visible partout. Le contour par defaut du
+   * navigateur est remplace au cas par cas, jamais supprime globalement. */
+  :focus-visible {
+    outline: 2px solid var(--color-green);
+    outline-offset: 2px;
+  }
+
+  /*
+   * Mouvement reduit. Volontairement PAS de coupure generale des transitions :
+   * elle emporterait le retour de clic des boutons, qui est un signal
+   * fonctionnel — l'interface confirme qu'elle a entendu — et non une
+   * decoration. Ce qui part, ce sont les deplacements et les entrees ; ce qui
+   * reste, ce sont les fondus et les changements de couleur.
+   *
+   * Les entrees sont donc neutralisees une par une, la ou elles sont
+   * declarees, via `motion-reduce:`.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-iteration-count: 1 !important;
+    }
+  }
+}
