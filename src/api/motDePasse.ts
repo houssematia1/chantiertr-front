@@ -35,7 +35,8 @@ interface Message {
  */
 export function useDemandeDeLien(): UseMutationResult<Message, Error, string> {
   return useMutation({
-    mutationFn: (email: string): Promise<Message> => api.post<Message>('/password/forgot', { email }),
+    mutationFn: (email: string): Promise<Message> =>
+      api.post<Message>('/password/forgot', { email }),
   })
 }
 
