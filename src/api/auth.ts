@@ -27,6 +27,67 @@ export interface Utilisateur {
   company_name?: string | null
 }
 
+/**
+ * Les facultes que la grille de droits sait retirer.
+ *
+ * L'union reprend `App\Domain\Identity\Enums\Droit` a l'identique. Elle est
+ * ecrite a la main et non generee : six valeurs, et une valeur inventee ici ne
+ * compilerait pas la ou elle est employee.
+ *
+ * `GET /me` NE REND QUE LES DROITS APPLIQUES. Quatre des six attendent M1, M3 et
+ * M6 ; l'API les tait a dessein, pour que le front ne puisse pas masquer un
+ * bouton au nom d'un droit qu'aucune policy ne verifie. Une restriction visible
+ * que le serveur n'applique pas inspire une confiance qu'elle ne merite pas.
+ *
+ * @see chantiertr-api/app/Domain/Identity/Enums/Droit.php
+ */
+export type Droit =
+  | 'supprimer_projet'
+  | 'acceder_comptabilite'
+  | 'modifier_facture_validee'
+  | 'acceder_bibliotheque'
+  | 'inviter_un_compte'
+  | 'archiver_un_compte'
+
+/**
+ * Les six roles fonctionnels.
+ *
+ * @see chantiertr-api/app/Domain/Identity/Enums/Role.php
+ */
+export type Role =
+  'superadmin' | 'super_admin_membre' | 'admin' | 'superviseur' | 'membre' | 'agent'
+
+/**
+ * L'emprunt de compte en cours.
+ *
+ * Le front NE PEUT PAS le deduire : l'emprunt vit dans la session sous
+ * `impersonator_id`, et le cookie de session est `HttpOnly`. C'est l'API qui le
+ * dit, et elle seule.
+ */
+export interface Emprunt {
+  par: { id: string; nom: string }
+}
+
+/**
+ * Tout ce que le shell a besoin de savoir : qui, avec quoi, et dans quel cadre.
+ *
+ * Les trois clefs viennent de `GET /me`, ou `data` porte le compte et les deux
+ * autres le contexte de la SESSION. Elles sont reunies ici en un seul objet
+ * parce qu'elles se lisent toujours ensemble et qu'elles s'invalident ensemble.
+ */
+export interface ContexteDeSession {
+  utilisateur: Utilisateur
+  droits: readonly Droit[]
+  emprunt: Emprunt | null
+}
+
+/** La forme brute de `GET /me`, avant d'etre rangee en `ContexteDeSession`. */
+interface ReponseMe {
+  data: Utilisateur
+  droits: Droit[]
+  emprunt: Emprunt | null
+}
+
 export interface Identifiants {
   email: string
   password: string
@@ -42,10 +103,15 @@ export const CLEF_SESSION = ['session'] as const
  * normal de l'application, pas une panne. Le rendre en `null` evite qu'un
  * visiteur anonyme voie un ecran d'erreur au lieu de l'ecran de connexion.
  */
-async function chargerSession(): Promise<Utilisateur | null> {
+async function chargerSession(): Promise<ContexteDeSession | null> {
   try {
-    const { data } = await api.get<Enveloppe<Utilisateur>>('/me')
-    return data
+    const reponse = await api.get<ReponseMe>('/me')
+
+    return {
+      utilisateur: reponse.data,
+      droits: reponse.droits,
+      emprunt: reponse.emprunt,
+    }
   } catch (erreur) {
     if (erreur instanceof ApiError && (erreur.status === 401 || erreur.status === 403)) {
       return null
@@ -57,11 +123,12 @@ async function chargerSession(): Promise<Utilisateur | null> {
 /**
  * Etat de la session courante.
  *
- * `staleTime: Infinity` : le profil ne change pas tout seul. Il est invalide
- * explicitement a la connexion, a la deconnexion et — au lot 2 — a l'emprunt de
- * compte. Sans cela, chaque remontage de composant declencherait un `GET /me`.
+ * `staleTime: Infinity` : le contexte ne change pas tout seul. Il est invalide
+ * explicitement a la connexion, a la deconnexion et aux deux bouts de l'emprunt
+ * de compte. Sans cela, chaque remontage de composant declencherait un
+ * `GET /me`.
  */
-export function useSession(): UseQueryResult<Utilisateur | null> {
+export function useSession(): UseQueryResult<ContexteDeSession | null> {
   return useQuery({
     queryKey: CLEF_SESSION,
     queryFn: chargerSession,
@@ -81,9 +148,16 @@ export function useSession(): UseQueryResult<Utilisateur | null> {
  * l'appel est ici explicite : sur la connexion, l'ordre est un point du
  * contrat, pas un detail d'implementation.
  *
- * La reponse EST le profil : `AuthController::login()` rend une `UserResource`.
- * Elle est posee directement dans le cache, ce qui evite un `GET /me` de plus
- * juste apres.
+ * LE PROFIL RENDU N'EST PAS POSE DANS LE CACHE, et c'est un renoncement
+ * deliberé a une optimisation qui tenait auparavant. `POST /login` rend une
+ * `UserResource` — le compte seul —, la ou le shell a besoin du CONTEXTE :
+ * les droits effectifs et l'etat d'emprunt. Poser le compte seul remplirait le
+ * cache d'un contexte a moitie vide, et la barre laterale se construirait un
+ * instant sur `droits: []` avant de se corriger.
+ *
+ * Une invalidation, donc, et un `GET /me` de plus. Il coute une trentaine de
+ * millisecondes sur un evenement qui arrive une fois par jour, et il garantit
+ * qu'il n'existe qu'UNE forme de session dans l'application.
  */
 export function useConnexion(): UseMutationResult<Utilisateur, Error, Identifiants> {
   const client = useQueryClient()
@@ -94,8 +168,37 @@ export function useConnexion(): UseMutationResult<Utilisateur, Error, Identifian
       const { data } = await api.post<Enveloppe<Utilisateur>>('/login', identifiants)
       return data
     },
-    onSuccess: (utilisateur) => {
-      client.setQueryData(CLEF_SESSION, utilisateur)
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: CLEF_SESSION })
+    },
+  })
+}
+
+/**
+ * Fin de l'emprunt de compte.
+ *
+ * TOUT LE CACHE PART, et pas seulement la session. Chaque entree a ete lue au
+ * nom du compte emprunte, dans son tenant : la garder ferait voir au
+ * super-administrateur, le temps d'un rafraichissement, l'annuaire d'un adherent
+ * sous sa propre identite. C'est le meme raisonnement qu'a la deconnexion, et le
+ * meme ordre — la session par une valeur explicite, le reste par retrait cible,
+ * jamais `clear()`.
+ *
+ * La difference avec la deconnexion : ici la session ne tombe pas a `null`, elle
+ * REDEVIENT celle de l'emprunteur. On invalide donc au lieu de vider.
+ */
+export function useArreterEmprunt(): UseMutationResult<void, Error, void> {
+  const client = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (): Promise<void> => {
+      await api.delete('/impersonation')
+    },
+    onSettled: async () => {
+      client.removeQueries({
+        predicate: (requete) => requete.queryKey[0] !== CLEF_SESSION[0],
+      })
+      await client.invalidateQueries({ queryKey: CLEF_SESSION })
     },
   })
 }

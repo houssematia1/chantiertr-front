@@ -133,7 +133,14 @@ export async function amorcerSession(): Promise<void> {
 async function appelBrut(methode: Methode, url: string, corps?: unknown): Promise<Response> {
   const entetes = new Headers({ Accept: 'application/json' })
 
-  if (corps !== undefined) {
+  // UN `FormData` NE PORTE PAS `Content-Type`, et il ne faut surtout pas le lui
+  // poser. Cet en-tete doit contenir la frontiere de separation des parties —
+  // `multipart/form-data; boundary=----WebKitFormBoundary…` — que seul le
+  // navigateur connait, puisque c'est lui qui la tire. L'ecrire a la main donne un
+  // en-tete sans frontiere, et PHP rend alors un `$_FILES` vide sans erreur : le
+  // televersement echoue en silence, et l'API repond « le champ logo est
+  // obligatoire » sur une requete qui portait bien le fichier.
+  if (corps !== undefined && !(corps instanceof FormData)) {
     entetes.set('Content-Type', 'application/json')
   }
 
@@ -153,7 +160,9 @@ async function appelBrut(methode: Methode, url: string, corps?: unknown): Promis
       // LA LIGNE QUI PORTE TOUT : sans elle le cookie de session ne part pas,
       // et toute requete authentifiee rend 401.
       credentials: 'include',
-      ...(corps === undefined ? {} : { body: JSON.stringify(corps) }),
+      ...(corps === undefined
+        ? {}
+        : { body: corps instanceof FormData ? corps : JSON.stringify(corps) }),
     })
   } catch (cause) {
     throw new ReseauError(cause)
@@ -259,4 +268,15 @@ export const api = {
     appeler<T>('PATCH', chemin, corps ?? {}),
   put: <T>(chemin: string, corps?: unknown): Promise<T> => appeler<T>('PUT', chemin, corps ?? {}),
   delete: <T>(chemin: string): Promise<T> => appeler<T>('DELETE', chemin),
+
+  /**
+   * Un POST qui porte un fichier.
+   *
+   * Il existe a part pour que le type le dise : `post()` accepte `unknown` et
+   * serialise en JSON, ce qui transformerait silencieusement un `FormData` en
+   * `{}`. Ici la signature n'accepte que `FormData`, et le corps traverse
+   * `appelBrut` sans etre serialise.
+   */
+  postFichier: <T>(chemin: string, corps: FormData): Promise<T> =>
+    appeler<T>('POST', chemin, corps),
 }

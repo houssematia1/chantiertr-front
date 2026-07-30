@@ -1,17 +1,24 @@
-import { createBrowserRouter } from 'react-router'
+import { Navigate, createBrowserRouter } from 'react-router'
 
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { ChoisirMotDePasse } from '@/pages/ChoisirMotDePasse'
 import { Connexion } from '@/pages/Connexion'
+import { EcranAVenir } from '@/pages/EcranAVenir'
+import { Entreprises } from '@/pages/Entreprises'
+import { FicheEntreprise } from '@/pages/FicheEntreprise'
+import { Introuvable } from '@/pages/Introuvable'
+import { MonCompte } from '@/pages/MonCompte'
+import { MonEntreprise } from '@/pages/MonEntreprise'
+import { NouvelleEntreprise } from '@/pages/NouvelleEntreprise'
 import { MotDePasseOublie } from '@/pages/MotDePasseOublie'
-import { Profil } from '@/pages/Profil'
 import { GardeDeSession } from '@/router/GardeDeSession'
 
 /**
  * Routes de l'application.
  *
  * Deux branches, comme dans `orvea-io/wastern-vue` : les ecrans sans session sous
- * `AuthLayout`, les ecrans avec session derriere `GardeDeSession`.
+ * `AuthLayout`, les ecrans avec session derriere `GardeDeSession` — qui rend le
+ * shell, barre laterale comprise.
  *
  * LES DEUX CHEMINS PORTEURS DE JETON NE SONT PAS NEGOCIABLES. Ils sont ecrits
  * dans le courriel que l'API envoie — `MotifDeJeton::segmentDeLien()` construit
@@ -19,8 +26,10 @@ import { GardeDeSession } from '@/router/GardeDeSession'
  * renommer casserait tous les liens deja partis, y compris les invitations
  * valables sept jours.
  *
- * Le lot 2 remplacera `Profil` par `AppLayout` et sa barre laterale filtree par
- * role. La structure est en place ; il n'y a qu'un enfant a substituer.
+ * LES `EcranAVenir` RESTANTS DOIVENT AVOIR DISPARU A LA FIN DU LOT S0-B. Il en
+ * reste DEUX — contacts (tache 4), comptes et grille des droits (tache 5). La
+ * tache 3 a retire les trois autres : annuaire des entreprises, fiche, et « mon
+ * entreprise ».
  */
 export const router = createBrowserRouter([
   {
@@ -39,11 +48,56 @@ export const router = createBrowserRouter([
   {
     element: <GardeDeSession />,
     children: [
-      { path: '/', element: <Profil /> },
+      // La racine mene a l'annuaire des entreprises, premiere entree de la barre
+      // laterale. Elle menera au tableau de bord quand M1 l'apportera : c'est la
+      // premiere entree du menu du logiciel d'origine.
+      { index: true, element: <Navigate to="/entreprises" replace /> },
+
+      { path: '/entreprises', element: <Entreprises /> },
+
+      // AVANT `/entreprises/:id`, et l'ordre compte : « nouvelle » serait sinon
+      // pris pour un identifiant, et l'API rendrait 404 sur une fiche inexistante.
+      { path: '/entreprises/nouvelle', element: <NouvelleEntreprise /> },
+      { path: '/entreprises/:id', element: <FicheEntreprise /> },
+      {
+        path: '/contacts',
+        element: (
+          <EcranAVenir
+            titre="Contacts"
+            tache={4}
+            objet="Les contacts et le carnet d'adresses : la liste, la création, et le retrait du carnet."
+          />
+        ),
+      },
+      { path: '/mon-entreprise', element: <MonEntreprise /> },
+      {
+        path: '/comptes',
+        element: (
+          <EcranAVenir
+            titre="Utilisateurs"
+            tache={5}
+            objet="L'annuaire des comptes de votre organisation : invitation, archivage, réactivation."
+          />
+        ),
+      },
+      {
+        path: '/droits',
+        element: (
+          <EcranAVenir
+            titre="Grille des droits"
+            tache={5}
+            objet="Les six facultés que la grille sait retirer, profil par profil. Réglable par le super-administrateur seul."
+          />
+        ),
+      },
+
+      { path: '/mon-compte', element: <MonCompte /> },
+
       // Toute autre adresse passe par la garde, donc retombe sur la connexion si
-      // la session manque. Un veritable ecran 404 viendra au lot 2, avec le
-      // shell qui l'encadre.
-      { path: '*', element: <Profil /> },
+      // la session manque. Avec une session, elle atterrit ici — DANS le shell,
+      // barre laterale comprise : une adresse fautive ne doit pas priver de
+      // navigation.
+      { path: '*', element: <Introuvable /> },
     ],
   },
 ])

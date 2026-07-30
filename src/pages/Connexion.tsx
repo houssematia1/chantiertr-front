@@ -8,14 +8,20 @@ import { Alerte } from '@/components/ui/Alerte'
 import { Bouton } from '@/components/ui/Bouton'
 import { Champ } from '@/components/ui/Champ'
 import { Lien } from '@/components/ui/Lien'
-import { PaveAuth } from '@/components/ui/PaveAuth'
 import { messageDErreur } from '@/lib/erreurs'
 
 /**
  * Ecran de connexion.
  *
- * Le chrome — pave, marque, titre, entree — est dans `PaveAuth`. Il ne reste ici
- * que le formulaire et la conduite a tenir sur les refus.
+ * IL NE PORTE AUCUN TITRE, et c'est une decision du client — MASTER § 10,
+ * decision 2. Deux champs libelles « Adresse e-mail » et « Mot de passe » disent
+ * deja tout ce que l'ecran attend ; un titre « Connexion » au-dessus ne ferait que
+ * le repeter. Les autres ecrans sans session en portent un, parce qu'eux ne sont
+ * pas deductibles de leurs champs — voir `EnteteAuth`.
+ *
+ * Le volet d'identite, la bande de chantier et le pied d'API sont dans
+ * `AuthLayout`. Il ne reste ici que le formulaire et la conduite a tenir sur les
+ * refus.
  */
 
 /**
@@ -74,7 +80,7 @@ export function Connexion() {
   })
 
   return (
-    <PaveAuth titre="Connexion" sousTitre="Accédez à votre espace de gestion">
+    <>
       {/* `void` explicite : `handleSubmit` rend une promesse, et un gestionnaire
           d'evenement ne l'attend pas. La signaler evite qu'un rejet reste muet. */}
       <form
@@ -84,9 +90,13 @@ export function Connexion() {
         noValidate
       >
         <Champ
-          libelle="E-mail"
+          taille="auth"
+          libelle="Adresse e-mail"
           type="email"
-          placeholder="nom@domaine.fr"
+          // `inputMode` en plus de `type` : sur iOS, `type="email"` seul ne
+          // garantit pas le clavier a arobase.
+          inputMode="email"
+          placeholder="prenom.nom@entreprise.fr"
           autoComplete="username"
           autoFocus
           erreur={errors.email?.message}
@@ -94,9 +104,11 @@ export function Connexion() {
         />
 
         <Champ
+          taille="auth"
           libelle="Mot de passe"
           type="password"
           autoComplete="current-password"
+          revelable
           erreur={errors.password?.message}
           {...register('password')}
         />
@@ -105,7 +117,9 @@ export function Connexion() {
 
         <Bouton
           type="submit"
+          taille="auth"
           pleineLargeur
+          className="mt-3.5"
           disabled={connexion.isPending}
           aria-busy={connexion.isPending}
         >
@@ -113,10 +127,14 @@ export function Connexion() {
         </Bouton>
       </form>
 
+      {/* Le filet referme le formulaire : sans lui, le lien flotte sous le
+          bouton sans appartenir a rien. */}
+      <div className="border-line mt-7 border-t" />
+
       {/* Le seul chemin vers la reinitialisation. Sans lui, un oubli de mot de
           passe se reglait par un appel a l'administrateur, qui en imposait un
           nouveau — donc le connaissait. */}
-      <p className="mt-4 text-13">
+      <p className="mt-5 text-[13.5px]">
         <Lien to="/mot-de-passe-oublie">Mot de passe oublié ?</Lien>
       </p>
 
@@ -131,6 +149,6 @@ export function Connexion() {
           {INDICATION}
         </p>
       )}
-    </PaveAuth>
+    </>
   )
 }

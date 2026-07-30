@@ -2,7 +2,7 @@ import { QueryClient, QueryObserver } from '@tanstack/react-query'
 import { describe, expect, it } from 'vitest'
 
 import { CLEF_SESSION, fermerLaSessionLocale } from './auth'
-import type { Utilisateur } from './auth'
+import type { ContexteDeSession, Utilisateur } from './auth'
 
 /**
  * Regression : la deconnexion doit etre VUE par les observateurs deja abonnes.
@@ -20,7 +20,7 @@ import type { Utilisateur } from './auth'
  * `useQuery` enveloppe, et c'est a ce niveau que la notification se joue.
  */
 
-const COMPTE: Utilisateur = {
+const UTILISATEUR: Utilisateur = {
   id: '019fb043-0ffa-7315-8ab7-107dddbdbf1b',
   prenom: 'Houssy',
   nom: 'Atia',
@@ -34,19 +34,32 @@ const COMPTE: Utilisateur = {
   company_id: null,
 }
 
+/**
+ * Le contexte complet, tel que `GET /me` le rend depuis le 30/07.
+ *
+ * `droits` et `emprunt` ne sont pas des ornements de test : ce sont les deux
+ * clefs que le shell lit pour filtrer la barre laterale et decider du bandeau. Le
+ * cache de session porte donc cette forme, et non le compte seul.
+ */
+const CONTEXTE: ContexteDeSession = {
+  utilisateur: UTILISATEUR,
+  droits: ['inviter_un_compte', 'archiver_un_compte'],
+  emprunt: null,
+}
+
 /** Un observateur abonne a la session, et la liste de ce qu'il a vu passer. */
 function observerLaSession(client: QueryClient): {
-  vues: (Utilisateur | null | undefined)[]
+  vues: (ContexteDeSession | null | undefined)[]
   desabonner: () => void
 } {
-  const observer = new QueryObserver<Utilisateur | null>(client, {
+  const observer = new QueryObserver<ContexteDeSession | null>(client, {
     queryKey: CLEF_SESSION,
     staleTime: Infinity,
     // Aucun appel reseau : le test porte sur la notification, pas sur `GET /me`.
     enabled: false,
   })
 
-  const vues: (Utilisateur | null | undefined)[] = []
+  const vues: (ContexteDeSession | null | undefined)[] = []
   const desabonner = observer.subscribe((resultat) => {
     vues.push(resultat.data)
   })
@@ -57,7 +70,7 @@ function observerLaSession(client: QueryClient): {
 describe('fermeture de la session locale', () => {
   it('notifie un observateur deja abonne que la session est tombee', () => {
     const client = new QueryClient()
-    client.setQueryData(CLEF_SESSION, COMPTE)
+    client.setQueryData(CLEF_SESSION, CONTEXTE)
 
     const { vues, desabonner } = observerLaSession(client)
 
@@ -73,7 +86,7 @@ describe('fermeture de la session locale', () => {
 
   it('emporte tout ce qui a ete lu au nom du compte qui part', () => {
     const client = new QueryClient()
-    client.setQueryData(CLEF_SESSION, COMPTE)
+    client.setQueryData(CLEF_SESSION, CONTEXTE)
     client.setQueryData(['companies'], [{ id: '1' }])
     client.setQueryData(['users', 'page', 1], [{ id: '2' }])
 

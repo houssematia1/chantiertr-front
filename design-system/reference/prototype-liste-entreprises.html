@@ -1,0 +1,371 @@
+<!doctype html>
+<!--
+  PROTOTYPE — liste des entreprises.
+
+  Le layout est repris a l'identique de la liste de societes de l'application
+  Vue de l'equipe : cartes empilees, logo a gauche, nom en titre, adresse a
+  pictogramme, compteurs, grille « libelle : valeur » sur deux colonnes, puces en
+  pied, colonne de droite pour les badges et la date. Toutes les mesures sont
+  relevees dans leur SCSS, pas approchees.
+
+  Deux habillages, parce qu'il y a un conflit a trancher : l'ecran de connexion
+  valide est en marine / vert / ambre, et cette liste-la est en menthe sur
+  gris-bleu. Deux palettes dans un meme produit sont un defaut.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — liste des entreprises</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   LA PALETTE — celle du logo et de l'ecran de connexion valide.
+   Marine `#0F3071`, vert `#157C5C`, ambre `#E8A33D`.
+
+   LA TYPOGRAPHIE ET LES MESURES sont celles de l'application Vue de
+   l'equipe : Roboto 300 pour le corps, Montserrat pour les titres, et
+   les rayons, ombres et espacements releves dans leur SCSS.
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --primary:      #157C5C;
+  --primary-fonce:#0F6349;
+  --danger:       #C0332F;
+  --warning:      #E8A33D;
+  --info:         #0F3071;
+  --success:      #1FA37A;
+
+  --page:         #F4F7FA;
+  --carte:        #FFFFFF;
+  --titre:        #0F3071;
+  --texte:        #5A6B82;
+  --filet:        #E3E8EF;
+  --logo-fond:    #F4F7FA;
+  --puce:         #E3E8EF;
+
+  --font:         'Roboto', sans-serif;
+  --font-titre:   'Montserrat', sans-serif;
+  --poids-corps:  300;
+
+  --r-ext:        20px;
+  --r-int:        16px;
+  --r-logo:       8px;
+  --r-champ:      8px;
+  --ombre-logo:   0 2px 4px rgba(23,35,50,.07);
+  --ombre-bouton: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--page);
+  font-family: var(--font);
+  font-weight: var(--poids-corps);
+  color: var(--texte);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════ COQUILLE ═══════════════ */
+.appli { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+.laterale { background: var(--carte); border-right: 1px solid var(--filet); padding: 16px 0; }
+.laterale .marque { padding: 2px 16px 20px; }
+.laterale .marque img { display: block; width: 150px; height: auto; }
+.laterale h2 { font-family: var(--font); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--texte); padding: 0 16px; margin: 14px 0 6px; }
+.laterale a { display: block; padding: 8px 16px; font-size: .9rem; color: var(--titre); text-decoration: none; border-left: 3px solid transparent; }
+.laterale a:hover { background: var(--page); }
+.laterale a[aria-current] { border-left-color: var(--primary); color: var(--primary); font-weight: 500; background: color-mix(in srgb, var(--primary) 8%, transparent); }
+
+.contenu { padding: 24px 28px 40px; min-width: 0; }
+
+/* ═══════════════ EN-TÊTE DE LISTE ═══════════════ */
+.entete { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.entete h1 { font-family: var(--font-titre); font-weight: 700; font-size: 1.75rem; color: var(--titre); line-height: 1.2; }
+
+.bouton {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 16px; border: 1px solid var(--primary); border-radius: var(--r-champ);
+  background: var(--primary); color: #fff; font-family: var(--font); font-weight: 500; font-size: .9rem;
+  cursor: pointer; box-shadow: var(--ombre-bouton);
+}
+.bouton:hover { background: var(--primary-fonce); border-color: var(--primary-fonce); }
+.bouton.contour { background: none; color: var(--success); border-color: var(--success); box-shadow: none; justify-content: flex-start; }
+.bouton.contour:hover { background: color-mix(in srgb, var(--success) 8%, transparent); }
+
+/* La carte-compteur : 9rem × 7rem, comme `wa-w-36 wa-h-28`. */
+.compteurs { display: flex; align-items: center; gap: 8px; margin: 16px 0 8px; }
+.compteur {
+  width: 9rem; height: 7rem; padding: 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  background: var(--carte); border: 1px solid var(--filet); border-radius: 8px;
+}
+.compteur b { font-family: var(--font); font-weight: 700; font-size: 1.5rem; color: var(--titre); font-variant-numeric: tabular-nums; }
+.compteur span { font-size: .875rem; font-weight: 500; color: #9CA3AF; text-align: center; }
+
+.filtres { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 20px; }
+.champ { position: relative; flex: 0 0 16rem; }
+.champ svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--texte); }
+.champ input, .select select {
+  width: 100%; height: 38px; border: 1px solid var(--filet); border-radius: var(--r-champ);
+  background: var(--carte); font: inherit; font-size: .9rem; color: var(--titre);
+}
+.champ input { padding: 0 12px 0 34px; }
+.champ input::placeholder { color: #CECECE; }
+.select { flex: 0 0 13rem; }
+.select select { padding: 0 12px; appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23A2A5B9' stroke-width='2'><path d='M4 6l4 4 4-4'/></svg>");
+  background-repeat: no-repeat; background-position: right 10px center; }
+.champ input:focus, .select select:focus { outline: 0; border-color: var(--primary); }
+
+/* ═══════════════ LA CARTE D'UNE ENTREPRISE ═══════════════ */
+.carte-ext { margin: 8px 0; padding: 4px; border-radius: var(--r-ext); position: relative; }
+/* AUCUN BANDEAU COLORE. La qualification se lit dans la colonne de droite —
+   « A-001 · Adhérente », « Tenue par la plateforme » — et le bandeau ne faisait
+   que la redire en occupant une bande de 24 px sur toute la largeur. */
+
+.item {
+  position: relative; display: flex; gap: 16px; padding: 16px;
+  background: var(--carte); border-radius: var(--r-int);
+}
+.item { border: 1px solid var(--filet); }
+
+.logo-boite {
+  width: 168px; height: 130px; flex: none;
+  background: var(--logo-fond); border-radius: var(--r-logo);
+  box-shadow: var(--ombre-logo); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-boite svg { width: 56px; height: 56px; color: #C9CDD6; }
+
+.details { width: calc(100% - 184px); display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.infos { min-width: 300px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.infos p, .infos span { font-size: .9rem; }
+
+.nom { display: flex; align-items: center; gap: 8px; }
+.nom h5 { font-family: var(--font-titre); font-weight: 600; font-size: 1.05rem; color: var(--titre); }
+.nom a { text-decoration: none; color: inherit; }
+.nom a:hover h5 { color: var(--primary); }
+
+.adresse { margin-top: 2px; display: flex; align-items: center; }
+.adresse svg { width: 14px; height: 14px; color: var(--texte); margin-right: 4px; flex: none; }
+
+.compte-entites { margin-top: 4px; }
+.compte-entites span { margin-right: 16px; }
+.compte-entites a { color: var(--primary); text-decoration: none; }
+.compte-entites a:hover { text-decoration: underline; }
+
+.plus-infos { margin: 8px 0; line-height: 1.2; }
+.plus-infos .deux-colonnes { display: grid; grid-template-columns: repeat(2, 1fr); }
+.plus-infos label { font-weight: 500; color: var(--titre); }
+.plus-infos p { color: var(--texte); }
+.plus-infos .num { font-variant-numeric: tabular-nums; }
+
+.pied { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.puce { background: var(--puce); padding: 4px 10px; border-radius: 34px; }
+.puce p { color: #4B5563; font-size: .8rem; }
+
+.etiquette {
+  padding: 4px 10px; border-radius: 25px; line-height: 1;
+  font-size: .8rem; color: #fff; max-width: fit-content;
+  border: 1px solid rgba(49,55,69,.45);
+}
+.etiquette.attente { background: var(--warning); }
+.etiquette.adherente { background: var(--primary); }
+.etiquette.reference { background: var(--info); }
+
+.droite { min-width: 96px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 12px; align-self: stretch; }
+.droite .adherent { font-family: var(--font); font-weight: 700; font-size: 1rem; color: var(--titre); font-variant-numeric: tabular-nums; }
+.droite .adherent small { display: block; font-weight: 400; font-size: .75rem; color: var(--texte); text-align: right; }
+.droite .date { font-size: .8rem; color: var(--texte); text-align: right; }
+.droite .actions { display: flex; gap: 6px; }
+.droite .actions button { width: 30px; height: 30px; border: 1px solid var(--filet); border-radius: 6px; background: var(--carte); color: var(--texte); cursor: pointer; display: grid; place-items: center; }
+.droite .actions button:hover { color: var(--primary); border-color: var(--primary); }
+
+/* ═══════════════ PAGINATION ═══════════════ */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 22px; }
+.pagination button { min-width: 32px; height: 32px; padding: 0 8px; border: 1px solid var(--filet); border-radius: 6px; background: var(--carte); color: var(--titre); font: inherit; font-size: .85rem; cursor: pointer; }
+.pagination button[aria-current] { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 500; }
+
+@media (max-width: 1100px) {
+  .appli { grid-template-columns: 1fr; }
+  .laterale { display: none; }
+  .details { flex-direction: column; width: calc(100% - 184px); }
+  .droite { align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="appli">
+
+  <aside class="laterale">
+    <!-- Le logo officiel, celui de l'ecran de connexion. La feuille dessinee a
+         la main qui figurait ici etait un pis-aller d'avant l'asset. -->
+    <div class="marque">
+      <img src="/logo.webp" width="150" height="43" alt="Chantier Tranquille">
+    </div>
+
+    <h2>Contacts</h2>
+    <a href="#" aria-current="page">Entreprises</a>
+    <a href="#">Contacts</a>
+
+    <h2>Administration</h2>
+    <a href="#">Mes entreprises</a>
+    <a href="#">Utilisateurs</a>
+    <a href="#">Grille des droits</a>
+    <a href="#">Mon compte</a>
+  </aside>
+
+  <main class="contenu">
+
+    <div class="entete">
+      <h1>Entreprises</h1>
+      <button class="bouton">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Nouvelle entreprise
+      </button>
+    </div>
+
+    <div class="compteurs">
+      <div class="compteur"><b>4</b><span>Entreprises</span></div>
+      <div class="compteur"><b>3</b><span>Adhérentes</span></div>
+    </div>
+
+    <div class="filtres">
+      <div class="champ">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" placeholder="Rechercher">
+      </div>
+      <div class="select">
+        <select>
+          <option>Toutes les catégories</option>
+          <option>Maître d'ouvrage</option>
+          <option>AMO</option>
+          <option>Société de facturation</option>
+          <option>Entreprise de BTP</option>
+          <option>Entreprise de services</option>
+          <option>Fournisseur</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="carte-ext">
+      <div class="item">
+        <div class="logo-boite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M12 10h.01M15 10h.01M9 13h.01M12 13h.01M15 13h.01"/></svg></div>
+        <div class="details">
+          <div class="infos">
+            <div>
+              <div class="nom">
+                <a href="#"><h5>Bâtir Ensemble</h5></a>
+                <span class="etiquette adherente">Adhérente</span>
+              </div>
+              <div class="adresse">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                <p>14 rue des Compagnons 34000 Montpellier</p>
+              </div>
+              <div class="plus-infos">
+                <div class="deux-colonnes">
+                  <p><label>SIRET :</label> <span class="num">790 151 831 00092</span></p>
+                  <p><label>SIREN :</label> <span class="num">790 151 831</span></p>
+                  <p><label>TVA :</label> <span class="num">FR 42 790151831</span></p>
+                  <p><label>Gérant :</label> <span class="">Karim Lefebvre</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="pied">
+              <div class="puce"><p>Entreprise de BTP</p></div>
+            </div>
+          </div>
+          <div class="droite">
+            <div class="adherent">A-001<small>Numéro d'adhérent</small></div>
+            <div class="actions">
+              <button title="Modifier"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4l10-10-4-4L4 16v4z"/></svg></button>
+              <button title="Retirer de mon carnet"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carte-ext">
+      <div class="item">
+        <div class="logo-boite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M12 10h.01M15 10h.01M9 13h.01M12 13h.01M15 13h.01"/></svg></div>
+        <div class="details">
+          <div class="infos">
+            <div>
+              <div class="nom">
+                <a href="#"><h5>Loueur Lyonnais</h5></a>
+                <span class="etiquette reference">Annuaire de référence</span>
+              </div>
+              <div class="adresse">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                <p>8 avenue Berthelot 69007 Lyon</p>
+              </div>
+              <div class="plus-infos">
+                <div class="deux-colonnes">
+                  <p><label>SIRET :</label> <span class="num">412 336 810 00027</span></p>
+                  <p><label>Forme :</label> <span class="">SAS</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="pied">
+              <div class="puce"><p>Fournisseur</p></div>
+            </div>
+          </div>
+          <div class="droite">
+            <div class="date">Tenue par la plateforme</div>
+            <div class="actions">
+              <button title="Ajouter à mon carnet"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carte-ext">
+      <div class="item">
+        <div class="logo-boite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M12 10h.01M15 10h.01M9 13h.01M12 13h.01M15 13h.01"/></svg></div>
+        <div class="details">
+          <div class="infos">
+            <div>
+              <div class="nom">
+                <a href="#"><h5>Toitures du Sud</h5></a>
+              </div>
+              <div class="adresse">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                <p>34000 Montpellier</p>
+              </div>
+              <div class="plus-infos">
+                <div class="deux-colonnes">
+                  <p><label>SIRET :</label> <span class="num">790 151 831 00092</span></p>
+                  <p><label>Gérant :</label> <span class="">Awa Diallo</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="pied">
+              <div class="puce"><p>Entreprise de BTP</p></div>
+            </div>
+          </div>
+          <div class="droite">
+            
+            <div class="actions">
+              <button title="Modifier"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4l10-10-4-4L4 16v4z"/></svg></button>
+              <button title="Retirer de mon carnet"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <button>‹</button>
+      <button aria-current="page">1</button>
+      <button>2</button>
+      <button>›</button>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
