@@ -36,7 +36,10 @@ import { CHIFFRES_CATALOGUE, PHRASE_AFFICHE, TITRE_AFFICHE } from '@/contenu/ide
  */
 export function AuthLayout() {
   return (
-    <div className="grid min-h-dvh grid-cols-1 lg:h-dvh lg:min-h-0 lg:grid-cols-[1fr_480px]">
+    // `font-affiche-corps` sur la racine : les ecrans sans session gardent Barlow,
+    // que le client a valide. L'application, elle, est en Roboto — voir
+    // `tokens.css`, section typographie. La dette des deux systemes y est notee.
+    <div className="font-affiche-corps grid min-h-dvh grid-cols-1 lg:h-dvh lg:min-h-0 lg:grid-cols-[1fr_480px]">
       <VoletIdentite />
 
       {/*
@@ -157,7 +160,7 @@ function VoletIdentite() {
          * est marine sur marine, donc invisible. Seul « compte tenu » resterait
          * lisible, parce que son `span` porte sa propre couleur.
          */}
-        <h1 className="font-display text-on-navy leading-affiche tracking-affiche text-[52px] font-bold uppercase lg:text-affiche">
+        <h1 className="font-affiche text-on-navy leading-affiche tracking-affiche text-[52px] font-bold uppercase lg:text-affiche">
           {TITRE_AFFICHE.debut}{' '}
           {/* L'ambre sur le marine vaut 5,79:1 : il passe le seuil du texte
               courant, pas seulement celui du grand texte. */}
@@ -185,7 +188,7 @@ function VoletIdentite() {
               <dd className="chiffres leading-affiche tracking-affiche text-affiche-chiffre font-semibold">
                 {chiffre.valeur}
               </dd>
-              <dt className="font-display text-on-navy-faint mt-2 text-[11px] font-semibold tracking-[0.15em] uppercase">
+              <dt className="font-affiche text-on-navy-faint mt-2 text-[11px] font-semibold tracking-[0.15em] uppercase">
                 {chiffre.libelle}
               </dt>
             </div>

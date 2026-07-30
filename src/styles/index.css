@@ -27,12 +27,32 @@
  * critique, pour gagner un `swap` de quelques dizaines de millisecondes.
  */
 
-/* Texte courant, formulaires, ET TOUS LES CHIFFRES — MASTER § 4 */
+/*
+ * DEUX SYSTEMES TYPOGRAPHIQUES COEXISTENT, et c'est une dette assumee, pas un
+ * oubli. Le client a valide l'ecran de connexion en Barlow, puis demande Roboto
+ * et Montserrat pour l'application — celles de l'application Vue de l'equipe.
+ * Les deux sont donc chargees, ce qui fait douze fichiers de fonte.
+ *
+ * A TRANCHER : soit l'ecran de connexion passe en Roboto et Montserrat — sept
+ * fichiers economises —, soit la dette reste. Elle est ecrite ici pour ne pas
+ * s'oublier.
+ */
+
+/* L'APPLICATION — texte courant, formulaires, et tous les chiffres. */
+@import '@fontsource/roboto/latin-300.css';
+@import '@fontsource/roboto/latin-400.css';
+@import '@fontsource/roboto/latin-500.css';
+@import '@fontsource/roboto/latin-700.css';
+
+/* L'APPLICATION — titres. */
+@import '@fontsource/montserrat/latin-500.css';
+@import '@fontsource/montserrat/latin-600.css';
+@import '@fontsource/montserrat/latin-700.css';
+
+/* LES ECRANS SANS SESSION seulement — l'affiche de l'ecran de connexion. */
 @import '@fontsource/barlow/latin-400.css';
 @import '@fontsource/barlow/latin-500.css';
 @import '@fontsource/barlow/latin-600.css';
-
-/* Titres, libelles en capitales, chiffres d'affiche — MASTER § 4 */
 @import '@fontsource/barlow-condensed/latin-600.css';
 @import '@fontsource/barlow-condensed/latin-700.css';
 
@@ -56,27 +76,31 @@
    * et 12 px sont demandes explicitement la ou la densite l'exige. */
   body {
     background: var(--color-bg);
-    color: var(--color-navy);
+    /* Le corps de texte est `--slate` et non `--navy` : c'est le rapport de
+     * l'application de l'equipe, ou `$light-text` porte les paragraphes et
+     * `$dark-text` les titres. Un corps entierement en marine ecrase la
+     * hierarchie. */
+    color: var(--color-slate);
     font-family: var(--font-sans);
-    font-size: var(--text-14);
+    /* 0,9rem — la mesure relevee dans leur `.client-details`. */
+    font-size: var(--text-corps);
+    font-weight: 300;
     line-height: var(--leading-corps);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Les titres sont en Barlow Condensed. Sa chasse etroite laisse un titre
-   * tenir sur une ligne a taille utile, ce qui sert la densite de MASTER § 2 —
-   * et c'est le caractere de l'ecran de connexion valide.
+  /* Les titres sont en Montserrat, et ils portent le MARINE quand le corps porte
+   * le slate : c'est ce contraste qui fait la hierarchie des cartes.
    *
-   * ATTENTION : Barlow Condensed n'a PAS de chiffres tabulaires. Mesure au
-   * navigateur, `111111` et `999999` gardent 7,32 px d'ecart a 40 px, avec
-   * `font-variant-numeric: tabular-nums` applique. Un titre peut donc porter un
-   * chiffre, mais JAMAIS une colonne — voir les utilitaires `chiffres` et
+   * ATTENTION : Montserrat n'a pas de chiffres tabulaires non plus. Un titre peut
+   * porter un chiffre, jamais une colonne — voir `chiffres` et
    * `colonne-chiffres` en bas de `tokens.css`. */
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  h5 {
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: var(--tracking-titre);

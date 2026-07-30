@@ -186,8 +186,18 @@
    * systeme, precisement l'interdit § 6.
    * ================================================================== */
 
-  --font-sans: 'Barlow', system-ui, sans-serif;
-  --font-display: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  /* L'APPLICATION. Roboto pour le corps, Montserrat pour les titres — celles de
+   * l'application Vue de l'equipe, demandees par le client apres qu'il a vu la
+   * liste des entreprises. */
+  --font-sans: 'Roboto', system-ui, sans-serif;
+  --font-display: 'Montserrat', system-ui, sans-serif;
+
+  /* LES ECRANS SANS SESSION seulement. L'affiche de l'ecran de connexion valide
+   * est composee en Barlow Condensed 700 a 76 px, et ce n'est pas transposable en
+   * Montserrat : sa chasse large ferait deborder les quatre lignes du titre. Ces
+   * deux jetons ne s'emploient QUE sous `AuthLayout`. */
+  --font-affiche: 'Barlow Condensed', system-ui, sans-serif;
+  --font-affiche-corps: 'Barlow', system-ui, sans-serif;
 
   /* Le monospace ne sert plus aux chiffres — voir les utilitaires en bas de
    * fichier. Il ne reste que pour les chaines reellement techniques qu'un
@@ -199,6 +209,9 @@
   /* Echelle de MASTER § 4 : 12 · 13 · 14 · 16 · 20 · 24. Six valeurs, et le
    * rapport du plus grand au plus petit tient dans un facteur 2. C'est ce
    * resserrement qui fait la densite — « aucun titre surdimensionne ». */
+  /* Le corps de l'application : 0,9rem, la mesure de leur `.client-details`. */
+  --text-corps: 0.9rem;
+
   --text-12: 12px;
   --text-13: 13px;
   --text-14: 14px;
@@ -268,9 +281,12 @@
    * ================================================================== */
 
   --radius-*: initial;
-  --radius-4: 4px; /* Champs, boutons, pastilles */
-  --radius-5: 5px;
-  --radius-6: 6px; /* Cartes, panneaux — le plus grand du produit */
+  --radius-4: 4px; /* Pastilles, petites etiquettes */
+  --radius-6: 6px;
+  --radius-8: 8px; /* Champs, boutons, boite de logo */
+  --radius-16: 16px; /* La carte interieure d'une entreprise */
+  --radius-20: 20px; /* La carte exterieure */
+  --radius-34: 34px; /* Les puces de categorie — un demi-cercle */
 
   /* ==================================================================
    * Ombres — une seule, et elle est reservee (MASTER § 6)
@@ -286,6 +302,13 @@
 
   --shadow-*: initial;
   --shadow-calque: 0 8px 24px -6px rgb(19 35 59 / 0.18), 0 2px 6px -2px rgb(19 35 59 / 0.12);
+
+  /* Les deux ombres de l'application de l'equipe, relevees dans leur SCSS.
+   * `logo` cerne la boite du logo dans la carte ; `bouton` est leur bouton
+   * « raised ». Ni l'une ni l'autre ne se pose sur une surface de travail. */
+  --shadow-logo: 0 2px 4px rgb(23 35 50 / 0.07);
+  --shadow-bouton:
+    0 5px 11px 0 rgb(0 0 0 / 0.18), 0 4px 15px 0 rgb(0 0 0 / 0.15);
 
   /* ==================================================================
    * Mouvement — reglage 2 sur 10 (MASTER § 5)

@@ -102,13 +102,19 @@ describe('la liste de rejet du plan', () => {
     expect(occurrences(/outline-none|outline:\s*(none|0)/g)).toEqual([])
   })
 
-  it("n'arrondit rien au-dela de 6 px", () => {
-    // MASTER § 6, « precision, pas douceur ». La remise a zero de `--radius-*`
-    // empeche `rounded-lg` de compiler, mais pas `rounded-[8px]` : c'est ce trou
-    // que ce test ferme.
+  it("n'arrondit rien au-dela de 20 px", () => {
+    // LE PLAFOND EST PASSE DE 6 A 20 PX, et il faut dire pourquoi : la liste des
+    // entreprises reprend la composition en cartes de l'application Vue de
+    // l'equipe, dont la carte exterieure est a 20 px et l'interieure a 16. Le
+    // « precision, pas douceur » de MASTER § 6 valait pour le style dense qui a
+    // ete ecarte ; il ne vaut plus.
+    //
+    // Le test reste, et il garde toujours quelque chose : 20 px est un plafond,
+    // pas une invitation. `rounded-[32px]` ne compile pas davantage qu'avant, et
+    // la remise a zero de `--radius-*` continue d'interdire `rounded-full`.
     const trop = occurrences(/rounded-\[(\d+)px\]/g).filter((trouve) => {
       const px = Number(/\[(\d+)px\]/.exec(trouve)?.[1] ?? 0)
-      return px > 6
+      return px > 20
     })
     expect(trop).toEqual([])
   })
@@ -147,8 +153,21 @@ describe('la liste de rejet du plan', () => {
     // obligatoire dans le TYPE, erreur sous le champ, region `aria-live`
     // preexistante, bordure a 3:1 pour WCAG 1.4.11. Un `<input>` ecrit ailleurs
     // les perd toutes les quatre, et rien ne le signalerait.
+    //
+    // DEUX EXCEPTIONS, et chacune est nommee plutot que toleree :
+    //
+    //  - `Selecteur` rend un `<select>`, pas un `<input>`, mais il porte les memes
+    //    garanties — libelle obligatoire dans le type, bordure `--line-champ`,
+    //    anneau de focus intact. Il n'est pas dans le motif de ce test ;
+    //  - `TeleverseurDeLogo` rend un `<input type="file">` en `sr-only`, declenche
+    //    par un bouton. Le controle natif ne se met pas en forme — trois
+    //    navigateurs, trois rendus —, et un libelle visible sur un champ invisible
+    //    n'aurait aucun sens. Le bouton porte le libelle, et le champ garde le sien
+    //    pour les technologies d'assistance.
+    const permis = ['components/ui/Champ.tsx', 'components/donnees/TeleverseurDeLogo.tsx']
+
     expect(
-      occurrences(/<input\b/g, (chemin) => !chemin.endsWith('components/ui/Champ.tsx')),
+      occurrences(/<input\b/g, (chemin) => !permis.some((permis) => chemin.endsWith(permis))),
     ).toEqual([])
   })
 

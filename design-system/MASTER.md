@@ -32,6 +32,66 @@ Corps de texte **12 à 14 px**. Padding **8 à 12 px**. En-têtes de tableau col
 
 ---
 
+## 2bis. Le système a changé au lot 3 — cartes, Roboto, Montserrat
+
+> **Ce qui précède en section 2, 4 et 6 décrivait le style « Data-Dense Dashboard » :
+> lignes de 36 px, corps à 12-14 px, rayons plafonnés à 6 px, Barlow. Le client l'a
+> refusé sur la liste des entreprises — « je veux pas ce theme ni ce police ni le
+> layout » — et a demandé d'imiter exactement la liste de sociétés de l'application
+> Vue de l'équipe. Les sections suivantes sont conservées pour l'écran de connexion,
+> qui reste validé en Barlow.**
+
+### Ce qui est repris, et d'où
+
+Les mesures sont relevées dans leur code — `ClientCard.vue`, `_clients_list.scss`,
+`_clients.scss`, `_variables.scss`, `tailwind.config.js` — pas approchées.
+
+| Élément | Mesure |
+|---|---|
+| Carte extérieure | `radius 20px`, `padding 4px`, `margin 8px 0` |
+| Carte intérieure | blanc, `radius 16px`, `padding 16px`, `gap 16px` |
+| Boîte de logo | `168 × 130`, `radius 8px`, ombre `0 2px 4px rgb(23 35 50 / .07)` |
+| Corps de texte | `0.9rem`, **Roboto 300** |
+| Titres | **Montserrat**, marine |
+| Puce de catégorie | `radius 34px`, `padding 4px 10px` |
+| Carte-compteur | `144 × 112`, gros chiffre en gras |
+| Recherche / sélecteur | `16rem` / `13rem`, hauteur 38 px |
+| Pagination | dix par page |
+
+**La palette reste celle de la marque** — marine `#0F3071`, vert `#157C5C`, ambre
+`#E8A33D`. Le client a vu les deux habillages, la leur en menthe `#05C6A5` et la
+nôtre, et a choisi la nôtre. C'est ce qui évite deux palettes dans un produit.
+
+### Deux écarts délibérés à leur feuille de style
+
+**Aucune animation sur les cartes.** Leur `.client-item-card` porte
+`transition: background-color 1s ease-out`. Une seconde sur une carte survolée au
+passage de la souris fait traîner l'interface, et une liste d'annuaire est
+parcourue des dizaines de fois par jour.
+
+**Le libellé d'un compteur ne s'accorde pas en nombre.** « 1 Adhérente » au
+singulier se lisait exactement comme l'étiquette « Adhérente » d'une carte, posée
+quinze pixels plus bas. Le libellé nomme une catégorie, pas un sujet.
+
+### La dette typographique, écrite pour ne pas s'oublier
+
+**Deux systèmes coexistent.** L'écran de connexion est validé en Barlow et Barlow
+Condensed ; l'application est en Roboto et Montserrat. Cela fait **douze fichiers
+de fonte**. Les jetons sont séparés — `--font-affiche` et `--font-affiche-corps` ne
+s'emploient que sous `AuthLayout` — donc rien ne se mélange, mais le poids reste.
+
+**À trancher :** l'écran de connexion passe en Roboto et Montserrat — sept fichiers
+économisés — ou la dette reste.
+
+### Ce que le changement a coûté
+
+Le composant `Tableau`, ses tris par colonne, son `aria-sort` et ses douze tests
+ont été **retirés** : plus rien ne les emploie. Ils sont dans l'historique git au
+commit qui les a introduits, et les tests avaient été éprouvés par mutation — ils
+sont reprenables tels quels si un écran de données tabulaires arrive au métier.
+
+---
+
 ## 3. Palette — la charte du prototype
 
 > ### Le bleu de la marque — résolu le 30/07
@@ -101,7 +161,9 @@ Le style « Data-Dense Dashboard » retenu en section 2 vient du référentiel `
 
 ---
 
-## 4. Typographie — Barlow et Barlow Condensed
+## 4. Typographie de l'écran de connexion — Barlow et Barlow Condensed
+
+> **L'application, elle, est en Roboto et Montserrat depuis le lot 3 — voir la section 2bis.** Cette section ne vaut plus que pour les écrans sans session.
 
 > ### Fira est retirée — décidé le 30/07 par validation
 >
@@ -169,7 +231,7 @@ Du référentiel, et de l'observation de ce qui trahit une interface générée 
 - **Aucun émoji comme icône.** Jeu vectoriel unique — Phosphor ou Heroicons —, épaisseur de trait constante.
 - **Aucun dégradé décoratif.** Aucun violet sur blanc.
 - **Aucune ombre portée sur la surface de travail.** Les filets séparent ; l'élévation est réservée aux vrais calques : modales, popovers.
-- **Aucun grand rayon.** 4 à 6 px. Précision, pas douceur.
+- ~~**Aucun grand rayon.** 4 à 6 px.~~ **Plafond porté à 20 px au lot 3** — la carte extérieure de l'annuaire est à 20 px, l'intérieure à 16. Le test `gardeFous` garde le nouveau plafond ; `rounded-[32px]` ne compile toujours pas.
 - **Aucun blanc excessif.** C'est un outil dense ; l'espace vide y est une perte.
 - **Aucun titre surdimensionné.** Pas de `clamp(3rem, 10vw, 12rem)`.
 - **Aucune police par défaut** — ni Inter, ni Roboto, ni système.

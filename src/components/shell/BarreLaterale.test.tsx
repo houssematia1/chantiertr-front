@@ -55,8 +55,8 @@ function rendre(session: ContexteDeSession) {
 }
 
 /** Les libelles des entrees, dans l'ordre du rendu. */
-function entrees(): string[] {
-  return screen.getAllByRole('link').map((lien) => lien.textContent ?? '')
+function entrees(): (string | null)[] {
+  return screen.getAllByRole('link').map((lien) => lien.textContent)
 }
 
 describe('BarreLaterale', () => {

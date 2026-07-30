@@ -32,7 +32,7 @@ export function EnteteAuth({ titre, sousTitre }: EnteteAuthProps) {
        * celui-ci est une consigne. Les mettre a la meme echelle les ferait se
        * disputer l'ecran.
        */}
-      <h1 className="font-display text-[26px] leading-titre font-bold uppercase tracking-[0.02em]">
+      <h1 className="font-affiche text-[26px] leading-titre font-bold uppercase tracking-[0.02em]">
         {titre}
       </h1>
       <p className="text-slate mt-2 max-w-[36ch] text-14">{sousTitre}</p>

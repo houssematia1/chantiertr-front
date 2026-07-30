@@ -23,9 +23,17 @@ import type { ReactNode } from 'react'
  */
 export interface EnteteEcranProps {
   titre: string
-  /** Une precision courte sous le titre, quand le libelle ne suffit pas. */
-  precision?: string
-  actions?: ReactNode
+  /**
+   * Une precision courte sous le titre, quand le libelle ne suffit pas.
+   *
+   * `| undefined` est ECRIT, et ce n'est pas redondant avec le `?` :
+   * `exactOptionalPropertyTypes` est actif, et il distingue « propriete absente »
+   * de « propriete presente valant `undefined` ». Sans cette union, un appelant
+   * qui calcule sa precision — `precision={enEdition ? undefined : texte}` — ne
+   * compile pas.
+   */
+  precision?: string | undefined
+  actions?: ReactNode | undefined
 }
 
 export function EnteteEcran({ titre, precision, actions }: EnteteEcranProps) {

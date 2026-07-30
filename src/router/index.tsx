@@ -4,8 +4,12 @@ import { AuthLayout } from '@/layouts/AuthLayout'
 import { ChoisirMotDePasse } from '@/pages/ChoisirMotDePasse'
 import { Connexion } from '@/pages/Connexion'
 import { EcranAVenir } from '@/pages/EcranAVenir'
+import { Entreprises } from '@/pages/Entreprises'
+import { FicheEntreprise } from '@/pages/FicheEntreprise'
 import { Introuvable } from '@/pages/Introuvable'
 import { MonCompte } from '@/pages/MonCompte'
+import { MonEntreprise } from '@/pages/MonEntreprise'
+import { NouvelleEntreprise } from '@/pages/NouvelleEntreprise'
 import { MotDePasseOublie } from '@/pages/MotDePasseOublie'
 import { GardeDeSession } from '@/router/GardeDeSession'
 
@@ -22,11 +26,10 @@ import { GardeDeSession } from '@/router/GardeDeSession'
  * renommer casserait tous les liens deja partis, y compris les invitations
  * valables sept jours.
  *
- * LES CINQ `EcranAVenir` DOIVENT AVOIR DISPARU A LA FIN DU LOT S0-B. Ce sont les
- * taches 3 a 5 du plan, et chacune remplace le sien. Ils existent pour que la
- * barre laterale soit traversable : avec des entrees qui menent a une page
- * introuvable, ni la route active, ni le comportement du bandeau d'emprunt d'un
- * ecran a l'autre ne se verifient.
+ * LES `EcranAVenir` RESTANTS DOIVENT AVOIR DISPARU A LA FIN DU LOT S0-B. Il en
+ * reste DEUX — contacts (tache 4), comptes et grille des droits (tache 5). La
+ * tache 3 a retire les trois autres : annuaire des entreprises, fiche, et « mon
+ * entreprise ».
  */
 export const router = createBrowserRouter([
   {
@@ -50,16 +53,12 @@ export const router = createBrowserRouter([
       // premiere entree du menu du logiciel d'origine.
       { index: true, element: <Navigate to="/entreprises" replace /> },
 
-      {
-        path: '/entreprises',
-        element: (
-          <EcranAVenir
-            titre="Entreprises"
-            tache={3}
-            objet="L'annuaire des entreprises : la liste, les filtres par catégorie, la fiche, et l'attribution du numéro d'adhérent."
-          />
-        ),
-      },
+      { path: '/entreprises', element: <Entreprises /> },
+
+      // AVANT `/entreprises/:id`, et l'ordre compte : « nouvelle » serait sinon
+      // pris pour un identifiant, et l'API rendrait 404 sur une fiche inexistante.
+      { path: '/entreprises/nouvelle', element: <NouvelleEntreprise /> },
+      { path: '/entreprises/:id', element: <FicheEntreprise /> },
       {
         path: '/contacts',
         element: (
@@ -70,16 +69,7 @@ export const router = createBrowserRouter([
           />
         ),
       },
-      {
-        path: '/mon-entreprise',
-        element: (
-          <EcranAVenir
-            titre="Mon entreprise"
-            tache={3}
-            objet="La fiche de votre entreprise et ses mentions légales — et, pour un super-administrateur, la liste des adhérents de la plateforme."
-          />
-        ),
-      },
+      { path: '/mon-entreprise', element: <MonEntreprise /> },
       {
         path: '/comptes',
         element: (

@@ -48,13 +48,13 @@ const TAILLES: Record<Taille, { conteneur: string; libelle: string; saisie: stri
   auth: {
     conteneur: 'mb-[22px]',
     libelle:
-      'font-display text-[11.5px] font-semibold uppercase tracking-etiquette text-slate mb-2',
-    saisie: 'h-14 rounded-6 px-4 text-16',
+      'font-affiche text-[11.5px] font-semibold uppercase tracking-etiquette text-slate mb-2',
+    saisie: 'h-14 rounded-8 px-4 text-16',
   },
   md: {
     conteneur: 'mb-3',
-    libelle: 'text-13 font-medium text-navy-soft mb-1',
-    saisie: 'h-11 rounded-4 px-3 text-14',
+    libelle: 'text-13 font-medium text-navy mb-1',
+    saisie: 'h-9.5 rounded-8 px-3 text-corps',
   },
 }
 
