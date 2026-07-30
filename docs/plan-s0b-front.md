@@ -17,26 +17,22 @@ Chantier Tranquille est un outil de travail. Un conducteur de travaux y saisit u
 
 Les trois sources de vérité de ce lot, dans cet ordre :
 
-1. **`docs/legacy-index.html` de l'API** — l'application d'origine. Ses 480 lignes de CSS (lignes 15951 à 16427) portent l'identité visuelle réelle et la densité réelle. C'est la référence.
+1. **`design-system/MASTER.md`** — le système de design, établi via le référentiel `ui-ux-pro-max`. Il fait foi sur tout ce qui est visuel : style, palette, typographie, mouvement, interdits.
 2. **`orvea-io/wastern-vue`** — l'application front de l'équipe. À reprendre pour la **structure de layout uniquement** : `src/layouts/AppLayout.vue` et `src/scss/layout/`. Pas ses composants métier, pas son style.
-3. **La philosophie d'ingénierie d'interface d'Emil Kowalski**, dans `~/Downloads/emilkowalski-skills/skills/emil-design-eng/SKILL.md`.
+3. **`docs/legacy-index.html` de l'API** — l'application d'origine. **Spécification métier uniquement** : logique, libellés, structure du menu, attentes de densité. **Son style n'est pas repris** — il est daté.
 
 ---
 
-## L'identité visuelle, relevée dans le legacy
+## L'identité visuelle
 
-```
---navy:      #13233B    --navy-soft: #2B3E59    --slate:  #5A6B82
---green:     #1FA37A    --green-d:   #157C5C    --green-l: #E7F5F0
---bg:        #F4F7FA    --card:      #FFFFFF    --line:   #E3E8EF
---ok:        #1FA37A    --warn:      #E8A33D    --danger: #D9534F
---radius:    14px
---shadow:    0 1px 3px rgba(19,35,59,.06)  ← une ombre, discrète, une seule
-```
+Elle est dans `design-system/MASTER.md` et nulle part ailleurs. En résumé :
 
-Bleu marine et vert. **Pas** le teal du projet mobile, qui est un autre produit.
+- **Style Data-Dense Dashboard** — barre latérale 240 px, en-tête 56 px, ligne de tableau 36 px, padding 12 px, corps 12-14 px
+- **Palette Construction / Architecture** — gris industriel `#64748B`, **orange de sécurité `#EA580C`** pour l'action seule, fond `#F8FAFC`, filets `#E2E8F0`
+- **Fira Code et Fira Sans** — et **tous les chiffres en tabulaire aligné à droite**
+- **Rayons 4 à 6 px**, filets plutôt qu'ombres, aucun dégradé, aucun émoji
 
-Le rayon est de **14 px**, pas 24. L'ombre est **unique et à peine visible**. Ces deux valeurs disent tout du registre : sobre, dense, professionnel.
+L'accent a déjà été ajusté de `#F97316` à `#EA580C` pour tenir WCAG 3:1. Ne pas le remettre à sa valeur d'origine.
 
 ---
 
@@ -91,7 +87,7 @@ Le rayon est de **14 px**, pas 24. L'ombre est **unique et à peine visible**. C
 
 | # | Tâche | Livrable |
 |---|---|---|
-| 1 | Échafaudage, tokens, client HTTP, authentification | Vite + React + TS + Tailwind, tokens du legacy, connexion fonctionnelle contre l'API |
+| 1 | Échafaudage, tokens, client HTTP, authentification | Vite + React + TS + Tailwind, tokens de `MASTER.md`, connexion fonctionnelle contre l'API |
 | 2 | Shell et navigation | `AppLayout`, `AuthLayout`, barre latérale filtrée par rôle, bandeau d'impersonation |
 | 3 | Annuaire des entreprises et fiche | Liste, filtres par catégorie, fiche, attribution du numéro d'adhérent |
 | 4 | Contacts | Liste, carnet d'adresses, création, retrait du carnet |
@@ -115,4 +111,19 @@ Le déploiement Envoyer ne figure pas dans cette liste : il est reporté en fin 
 
 ## Méthode
 
-Chaque tâche se termine par une capture de l'écran livré, comparée à l'écran correspondant du legacy. **Si l'écran neuf est plus aéré, plus arrondi et plus vide que l'ancien, il est faux.**
+Chaque tâche se termine par une **capture de l'écran livré**, et par une confrontation à `design-system/MASTER.md`, point par point.
+
+Le critère de rejet n'est pas une impression, c'est une liste :
+
+- Un hexadécimal en dur dans un composant → **faux**
+- Un émoji en guise d'icône → **faux**
+- Un rayon au-delà de 6 px → **faux**
+- Une ombre portée sur la surface de travail → **faux**
+- Un chiffre non tabulaire dans une colonne → **faux**
+- Une animation sur la navigation, un tableau ou un onglet → **faux**
+- `transition: all`, ou l'animation de `width` / `height` / `top` / `left` → **faux**
+- Un champ sans libellé visible → **faux**
+- Un anneau de focus retiré → **faux**
+- Un contraste de texte sous 4.5:1 → **faux**
+
+Chacun de ces points est vérifiable sans débat de goût. C'est l'intérêt de les avoir écrits.
