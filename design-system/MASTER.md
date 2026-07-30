@@ -182,55 +182,64 @@ Les libellés et le regroupement du menu viennent du logiciel d'origine, pas d'u
 
 ---
 
+---
+
 ## 10. Écrans sans session — direction validée
 
-**Référence : `design-system/reference/connexion.html`.** Validée à l'écran par le client après comparaison de quatre pistes, puis trois itérations. **Elle fait foi et se transpose telle quelle en React** — elle ne s'interprète pas.
+**Référence : `design-system/reference/connexion.html`.** Validée à l'écran par le client. Elle fait foi et **se transpose telle quelle en React** — elle ne s'interprète pas.
 
-Direction retenue : **signalétique de chantier.** Écartées : presse technique suisse, registre contractuel en serif, instrument sombre monospace.
+Ses ressources sont à côté : `logo.png` (détouré), `logo-blanc.png` (renversé pour fond sombre), `benne.png` (détouré, alpha).
 
 ### Composition
 
-Deux volets pleine hauteur, sans marge extérieure. Gauche `1fr`, droite **480 px fixes**.
+Deux volets pleine hauteur, sans marge. Gauche `1fr`, droite **480 px fixes**.
 
-**Volet gauche — identité, marine :**
-- **Le logo en haut à gauche, et nulle part ailleurs.** Le dupliquer dans le volet droit a été essayé puis rejeté.
-- Un bloc poussé vers le bas par `margin-top:auto` : titre, paragraphe, chiffres
-- **La bande d'avertissement ambre en pied**, 9 px, rayures à 135°. En pied du volet, pas en couture entre les volets — une version en couture verticale a été essayée puis rejetée.
+**Volet gauche — bleu de marque `#0F3071` :**
+- Le **logo blanc** en haut à gauche, largeur 186 px. `align-self:flex-start` est nécessaire : sans lui, le conteneur flex étire l'image sur toute la largeur.
+- Un bloc poussé vers le bas par `margin-top:auto`, sur `max-width:20ch` : titre, paragraphe, chiffres
+- **L'illustration de benne débordant du cadre** en bas à droite : `right:-8%`, `bottom:-6%`, largeur 54 %. Elle est en `::before`, donc sous le texte, et `pointer-events:none`.
+- **La bande d'avertissement ambre en pied**, 9 px, rayures à 135°
 
-**Volet droit — formulaire, blanc :**
-- **Aucun titre, aucun sous-titre.** Ni « Connexion », ni phrase d'accueil. Les champs parlent d'eux-mêmes.
-- Les champs **centrés verticalement**. Les ancrer vers le haut a été essayé puis rejeté.
+**Volet droit — blanc :**
+- **Aucun titre, aucun sous-titre.** Les champs seuls.
+- Les champs **centrés verticalement**
 - Un pied discret portant l'adresse de l'API
 
-### Quatre décisions à ne pas défaire
+### Cinq décisions à ne pas défaire
 
-Chacune a été essayée dans l'autre sens et rejetée. Ne pas y revenir sans le demander.
+Chacune a été essayée dans l'autre sens et rejetée. Ne pas y revenir sans demander.
 
-1. **Le logo reste à gauche**, en haut du volet identité.
+1. **Le logo reste à gauche.** Le déplacer à droite a été rejeté.
 2. **Le volet droit ne porte aucun texte** hors libellés de champs et intitulé de bouton.
 3. **Les champs sont centrés verticalement**, pas ancrés en haut.
 4. **La bande d'avertissement est en pied du volet gauche**, pas en couture verticale.
+5. **L'illustration déborde du cadre.** C'est voulu : elle est cadrée serré pour être coupée.
+
+### Les ressources visuelles
+
+**Le logo.** Le fichier officiel est bleu sur blanc. Deux versions en sont dérivées : l'originale détourée sur alpha, et une **version renversée** où tout le bleu devient blanc et **seule la feuille garde son vert**. C'est celle-ci qui va sur fond sombre.
+
+**L'illustration.** Générée par le client à partir d'un prompt cadré : sujet unique, palette stricte de la marque, fond transparent, cadrage serré destiné à être coupé. Elle arrivait sur un fond kaki dégradé avec ombre portée ; le détourage se fait par remplissage depuis les bords, en discriminant sur le fait que **le kaki a le rouge et le vert dominants là où les contours de l'illustration ont le bleu dominant.** Ce test épargne les contours, ce qu'un seuil de luminosité ne fait pas.
+
+Le script de détourage est reproductible pour les prochaines illustrations.
 
 ### Ce que l'ambre porte ici
 
-**L'ambre porte l'emphase du titre** — `compte tenu` en `#E8A33D` sur marine, ratio 6,7:1.
+**L'ambre porte l'emphase du titre** — `compte tenu` sur bleu de marque.
 
-C'est un écart assumé à la discipline de la section 3, qui réserve l'ambre à l'alerte. Le client l'a choisi et c'est sa marque. **La règle de la section 3 reste valable partout ailleurs :** dans l'application connectée, l'ambre alerte et le vert agit.
+Écart assumé à la discipline de la section 3, qui réserve l'ambre à l'alerte. Le client l'a choisi, c'est sa marque. **La règle de la section 3 reste valable partout ailleurs** : dans l'application connectée, l'ambre alerte et le vert agit.
 
 ### Règles de formulaire, du référentiel
 
-Appliquées ici, et attendues sur tout formulaire du produit :
-
-- **Libellé visible au-dessus de chaque champ.** Jamais un placeholder seul.
-- **Bouton afficher / masquer le mot de passe**, avec `aria-label` qui change d'état. Il manquait.
+- **Libellé visible** au-dessus de chaque champ. Jamais un placeholder seul.
+- **Bascule afficher / masquer le mot de passe**, avec `aria-label` qui change d'état.
 - **Types sémantiques** : `type="email"`, `inputmode="email"`, `autocomplete="username"` et `current-password`.
 - **Anneau de focus visible** sur les champs, le bouton et la bascule. Jamais supprimé.
-- Champs à **52 px**, bouton à **54 px** — au-delà des 44 px minimum.
-- **20 px entre les champs**, au-delà des 8 px minimum.
-- Champs visuellement distincts : bordure 1,5 px, état de survol distinct de l'état de repos.
+- Champs à 52 px, bouton à 54 px, **20 px entre les champs** — au-delà des minimums.
+- Champs visuellement distincts : bordure 1,5 px, état de survol distinct du repos.
 
 ### Typographie de ces écrans
 
-Barlow Condensed 700 en capitales pour le titre, les chiffres et les micro-libellés. Barlow 400/500 pour le texte courant. Titre à 78 px, interligne 0,90.
+Barlow Condensed 700 en capitales pour le titre, les chiffres et les micro-libellés. Barlow 400/500 pour le texte courant. Titre à 76 px, interligne 0,90.
 
-**Ceci remplace Fira Code et Fira Sans de la section 4 sur les écrans sans session.** La section 4 reste valable pour l'application connectée, où le mono tabulaire aligne les colonnes de montants. **Arbitrage en attente :** unifier sur une famille, ou assumer Barlow pour la marque et Fira pour le travail. À trancher au premier écran connecté, quand un tableau de prestations sera visible à côté de cet écran — pas avant.
+**Arbitrage en attente :** Fira Code et Fira Sans de la section 4 restent prévues pour l'application connectée, où le mono tabulaire aligne les colonnes de montants. À trancher au premier écran connecté : unifier sur Barlow, ou assumer Barlow pour la marque et Fira pour le travail.
