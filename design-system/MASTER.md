@@ -34,6 +34,15 @@ Corps de texte **12 à 14 px**. Padding **8 à 12 px**. En-têtes de tableau col
 
 ## 3. Palette — la charte du prototype
 
+> ### ⚠ CORRECTION — le bleu de la marque
+>
+> Le logo officiel a été fourni le 30/07. **Le bleu réel de la marque est `#0F3071`**, un bleu roi profond — relevé au pixel dans le fichier.
+>
+> Le `#13233B` utilisé jusque-là venait du CSS du prototype HTML : il est nettement plus sombre et plus gris, et **ce n'était pas la couleur de la marque.** Tous les jetons `--navy` de cette section sont à relire à cette lumière ; la référence `design-system/reference/connexion.html` est déjà sur `#0F3071`.
+>
+> Les ratios de contraste de la table ci-dessous ont été mesurés sur `#13233B` et **doivent être remesurés** sur `#0F3071`, qui est plus clair — donc moins contrasté sur fond blanc.
+
+
 **La charte graphique du prototype est l'identité de la marque et elle est conservée.** Marine et vert. C'est le *style* du logiciel d'origine qui était daté, pas ses couleurs.
 
 Mais trois de ses couleurs ne tiennent pas les seuils d'accessibilité en usage texte. Les ratios ont été mesurés, pas estimés :
